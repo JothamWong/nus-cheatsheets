@@ -33,3 +33,8 @@ If you find any typos please let me know! Thank you :)
 - [Geogebra](https://www.geogebra.org/calculator)
 - [Desmos](https://www.desmos.com/calculator)
 - [Matlab Online](https://matlab.mathworks.com/)
+
+## Credits
+
+Credits go to 
+Jovyn: https://github.com/jovyntls/cheatsheets
