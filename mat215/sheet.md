@@ -1,0 +1,336 @@
+
+- Supremum and infimum
+	- Lowest upper bound
+	- Greatest lower bound
+	- They are unique
+	- an upper bound u is sup S iff for all eps there exists an s in S such that u - eps < s
+		- Basically you cannot go any lower, produces an eps
+- Axiom of completeness
+	- Non-empty and bounded above => sup exists
+	- Non-empty and bounded below => inf exists
+- Nested Interval Property
+	- Intersection of nested intervals is non-empty
+- Archimedean Property
+	- N is unbounded. For any real, u can find a natural number greater
+	- Flip to get the reciprocal
+		- For any positive real, u can get a 1 / natural number lesser than it
+- Density of Q in R
+	- For any real numbers x < y, there exists a q such that x < q < y
+- Cardinality
+	- The union of countable is countable
+	- Q is countable
+	- R is uncountable
+- Sequences and Limits
+	- The limit of a sequence, if it exists is unique
+	- If (Xn) is convergent, it is bounded
+	- Algebraic Limit Theorem
+		- Scalar multiplication
+		- Addition of two limits
+		- Multiplication of two sequences
+		- Division if denom isnt 0
+	- Comparison Theorem
+		- If a_n >= 0 then a >= 0 (a is limit of a_n)
+		- If a_n >= b_n then a >= b
+	- Squeeze Theorem
+		- If x_n <= y_n <= z_n and x = z then y = x
+	- Monotone Convergence Theorem
+		- A monotone sequence is convergent iff it is bounded
+	- Subsequences
+		- If (X_n) converges to X, then any subsequence also converges to X
+	-  Proving Divergence
+		- If a sequence is unbounded, it diverges
+		- If two subsequences converge to diff limit, the seq diverges
+	- Bolzano Weierstrass theorem
+		- any bounded sequence of real numbers has a convergent subsequence
+			- Need to understand the idea of the proof
+	- Cauchy Sequence
+		- Every cauchy sequence is bounded
+		- A sequence is convergent iff it is cauchy
+- Infinite Series
+	- Defined as a sequence of sub-sums
+		- These sequence is monotonically increasing (shud be obv)
+	- Geometric series
+		- summation of a times r^n
+			- If r >= 1, it is divergent
+			- If 0 < r < 1 it is convergent with 1/1-r
+	- Harmonic Series
+		- summation of 1 / n
+			- Diverges
+	- P Series
+		- Summation of 1 / n^p
+		- If p > 1, it converges
+	- Cauchy Criterion for Series
+		- Same thing but for the individual terms
+	- N-th term test
+		- If the series converge, the inner term reaches 0
+		- Else if the inner term does not reach 0, it diverges
+	- Comparison test
+		- if for all n, x_n <= y_n
+			- If sum y_n converges, sum x_n converges
+			- If sum x_n diverges, sum y_n diverges
+	- Absolute convergence
+		- If sum |x_n| converges, the sum x_n converges
+		- Conditional convergence is when only sum x_n converges
+	- Alternating series
+		- If the individual terms are decreasing
+		- and the term approaches 0
+		- then it converges
+	- Ratio test
+		- lim a_n+1/a_n = L
+			- If L = 1, inconclusive
+			- If L < 1, converge
+			- if L > 1, diverge
+- Topology
+	- Open set
+		- For every x in O, there exists a neighborhood such that it is contained in O
+		- A sequence (Xn) converges to X iff for any open set O containing X there exists a natural number K such that for all n >= K, Xn inside O 
+	- Closed set
+		- Contains all its limit points
+		- Characterizations
+			- F is closed iff every cauchy sequence contained in F has a limit in F
+	- R is both open and closed
+	- Q is not closed
+		- In fact, the limit points of Q denoted as L_Q is R
+	- Limit point c
+		- for any eps > 0, there exists x in A such that x != c and |x-c| < eps
+		- If c is in A and is not a limit point, it is an isolated point
+		- Sequence theorem
+			- c is a limit point of A iff there is a sequence contained in A such that it converges to c and a_n != c
+	- Unions and intersections
+		- Unions of open is open
+		- Intersection of open is open
+	- Compactness 
+		- A is compact if every sequence in A has a subsequence that converges to a point in A
+		- A is compact iff it is closed and bounded
+	- Heine-Borel
+		- K is compact
+		- K is closed and bounded
+		- Every open cover for K has a finite subcover
+	- Connected Sets
+		- A and B are **separated** if closure of A intersect B is empty and A intersect closure of B is empty
+		- Separated sets A and B are **disconnected** if exists a set D = A U B
+		- Not disconnected == connected
+		- A set E is connected iff for all non-empty disjoint sets A and B that satisfy E = A U B, there exists a convergent sequence (X_n) contained in either A or B and X in the other
+		- The only connected sets are singletons or intervals
+- Continuity
+	- Sequential criterion
+		- lim f = L
+		- if (a_n) is contained in A \\ {c} and (a_n) -> c then lim f(a_n) = L
+	- ALT for limits and continuity applies
+		- scalar multiply
+		- addition
+		- multiply
+		- division
+		- so all polynomials are continuous 
+	- How to prove a limit doesnt exist
+		- Find two sequences that approach c the limit point but F(a_n) != F(b_n)
+	- Sequential criterion for continuity
+		- Every sequence contained in A that converges to c has f(a_n) = f(c)
+	- Sequential criterion for discontinuity
+		- A sequence contained in A that converges to c but f(a_n) != c
+	- Squeeze theorem applies for continuity and on limits of functions
+	- Continuity on compact sets
+		- Preservation of compactness
+		- Extreme value theorem
+		- A continuous function on a compact set is uniformly continuous
+	- Continuity on connected sets
+		- Connectivity is preserved
+	- Uniform continuity
+		- delta is chosen independently of c, the limit point
+		- How to prove not uniform continuous
+			- Find two sequences such that |x_n - y_n| -> 0 but |f(x_n) - f(y_n)| >= eps for all n in N
+	- Intermediate Value Theorem
+		- States that all continuous functions have the intermediate value property
+	- IVP
+		- For any z in between x and y, there exists a point c such that f(c) = z 
+	- If a function [a,b] -> R is continuous, then there exists points x_m and x_M in [a, b] such that f(x_m) = inf f([a, b]) and f(x_M) = sup f([a, b])
+- Sets of discontinuity
+	- The Dirichlet function is 1 if x is in Q and 0 if x is irrational
+		- D is nowhere continuous
+	- Thomae's function
+		- 1 if x = 0
+		- 1/n if x = m/n (in lowest terms so its finite) and n > 0
+		- 0 if x not rational
+			- T is discontinuous on Q and continuous on the irrationals
+	- Jump discontinuity
+		- left limit and right limit exist but are different
+	- Increasing function
+		- left limit is sup of f on the left side
+		- right limit is inf of f on the right side
+		- can only have jump discontinuities as the left and right limit definitely exist
+	- D_f for an increasing function f is finite or countable on an interval
+		- basically set of jump discontinuities has to be finite 
+- Differentiation
+	- differentiability implies continuity
+	- ALT for differentiability
+		- scalar
+		- sum
+		- product rule
+		- quotient rule
+		- chain rule
+	- Interior extremum theorem
+		- if f has a relative extremum (greater than all points in some neighbourhood), then if the derivative exists, it is 0
+	- If f is continuous and it has a relative extremum, either f' exists and equals 0 or it no exist
+	- Rolle Theorem
+		- f: [a,b] is continuous and differentiable and f(a) = f(b) = 0, then there exists c in (a,b) such that f'(c) = 0
+	- Mean Value Theorem
+		- When a function is differentiable, there exists a c in (a,b) such that f(b) - f(a) / (b - a) = f'(c)
+		- Consequences of MVT
+			- if f'(x) = 0 for all x in (a, b) f is a constant function
+			- if f'(x) = g'(x) then f = g + c
+			- f is increasing iff f'(x) >= 0
+			- f is decreasing iff f'(x) <= 0
+			- First derivative test
+				- if f'(x) >= 0 on the left and <= 0 on the right, it is max
+					- use mvt to find on left and right side
+			- useful inequalities
+				- -x <= sinx <= x
+					- use mvt and |cosx| <= 1
+				- bernoulli's inequality
+					- if alpha > 1 then (1 + x) ^ alpha >= 1 + alphax for all x > -1
+						- why wud i ever use this?
+		- Generalized MVT
+			- if f, g are cont and diff on (a,b) then exists a y in (a,b) such that 
+			- (f(b)-f(a))/g'(y) = (g(b) - g(a))/f'(y)
+	- L'Hopital
+		- 0/0 case part i
+			- f(c) = g(c) = 0, f and g are diff and g'(c) != 0 and if g(x) != 0 for some neighborhood around c excluding c
+			- lim f(x)/g(x) = lim f'(c)/g'(c)
+				- use f(c) = 0 to subtract by 0 then divide by 1 (x - c) then ALT and limit to produce f' since we know its diff
+		- 0/0 case part ii
+			- the reverse direction from f' to f
+			- f and g is cont on I containing c and f and g are diff everywhere except possibly at c
+			- if f(c) = g(c) = 0 and g'(x) != 0 for all x in I except c
+			- if lim f'(x)/g'(x) = L then lim f(x)/g(x) = L
+				- use generalized mvt
+		- inf/inf case
+			- f and g are diff on I and g'(x) != 0 for I
+			- if lim g(x) = inf or -inf, then
+			- lim f'(x)/g'(x) = L => lim f(x)/g(x) = L
+- Sequence and series of functions
+	- pointwise convergence
+		- f_n -> f
+	- uniform convergence
+		- f_n ->-> f
+		- eps is independent of x
+	- criteria for non-uniform convergence
+		- there exists some eps > 0 and some subsequence f_n_k and sequence x_k such that |f_n_k(x_k) - f(x_k)| >= eps
+	- Cauchy criterion for uniform convergence
+		- uni converg iff for eps > 0, there exists K s.t n >= K |f_n(x) - f_m(x)| < eps
+	- Consequences of uni converg
+		- Continuity Limit Thm
+			- if each f_n is cont at c and f_n ->-> f then f is cont at c
+				- split into eps / 3 and add by 0 twice
+		- Dini's Thm
+			- Let K be compact
+			- each f_n is cont
+			- f_n -> f and f is cont
+			- f_n(x) <= f_n+1(x) for all x in K
+			- Then the convergence is uniform
+		- Diff limit thm
+			- f_n -> f
+			- f_n is differentiable
+			- f_n' ->-> g
+			- then f is differentiable and f' = g
+		- Diff limit thm stronger version
+			- no need f_n -> f because f_n' ->-> g and a point x_0 where f_n(x_0) converge is sufficient
+			- f_n is differentiable
+			- f_n(x_0) converge for some x_0
+			- f_n(x)' ->-> g
+			- then f_n ->-> f and f' = g
+				- f_n(x_o) is convergent so it is cauchy sequence, produce eps / 2
+				- f' is uni conv, cauchy produce eps / 2(b-a)
+	- Series of functions
+		- treat as sequence of partial sums as usual
+		- term by term continuity
+			- f_n is cont
+			- sum f_n converge uni to f
+			- then f is cont
+		- term by term diff stronger
+			- f_n is diff
+			- sum f_n(x_0) converge for some x_0
+			- sum f_n(x)' ->-> g
+			- then sum f_n ->-> f and f is differentiable st 
+				- f'(x) = sum f_n(x)'
+		- How to test for uni conv
+			- cauchy criterion for uni conv of series
+				- sum f_n(x) ->-> f iff for eps > 0, there exists K st m > n >= K then |f_n+1(x) + f_n+2(x) + ... + f_m(x) | < eps
+			- Weiestrass M test
+				- (M_n) where M_n is independent of x!!!!!!!!!!!!!!!!!!!
+				- and for all x in A, |f_n(x)| <= M_n
+				- if sum M_n is convergent then sum f_n is uni convergent
+	- Power series
+		- sum a_nx^n
+		- ratio test on the limit < 1 is abs convergent else inconclusive or diverge
+		- if power series converge at x_0 in R \ {0} then it converge abs for (-|x_0|, |x_0|)
+			- it also converge uniformly 
+			- known as radius of convergence
+		- Continuity of power series
+			- The power series is continuous on (-R, R)
+		- Diff of power series
+			- if power series converge on R
+			- sum a_nx^n-1 also converge on R equals f'(x)
+	- Taylor formula
+		- a_n = f^n(0)/n!
+			- note that f^n is not power of n but differentiated n times
+	- Error theorem
+		- if f is diff N+1 times on (-R, R)
+		- Given x != 0 in (-R,R), there is some c st |c| < |x| where
+		- E_N(x) = f(x) - S_N(x)
+			- where S_N is a_0 + a_1x+...
+		- E_N(x) = (f^(N+1)(c)/(N+1)!)x^N+1
+- Integration
+	- we always assume f is bounded
+	- Partition P
+		- m_k, M_k for each subinterval
+	- L(f, P) <= U(f, P)
+	- Q is a refinement of P (make more fine grained)
+		- then L(f, P) <= L(f, Q) and U(f, Q) <= U(f, P)
+			- lower goes up
+			- upper goes down
+	- for any two partitions P_1 and P_2
+		- L(f, P_1) <= U(f, P_2)
+			- prove by using refinement
+	- Riemann integrability
+		- L(f) = sup L(f, P)
+		- U(f) = inf U(f, P)
+		- For any bounded f, L(f) < U(f)
+		- Riemann integrable if L(f) = U(f)
+			- For every eps > 0, there exists a partition P_eps such that U(f, P_eps) - L(f, P_eps) < eps
+		- continuity on [a, b] implies riemann integrable
+			- not riemann integrable => not cont
+		- bounded and monotonic on [a,b] then riemann integrable
+		- int from a to b = int from a to c + int from c to b
+		- f and g are integrable
+			- f + g is integrable
+			- fg is integrable
+			- scalar is integrable
+			- f <= g => int of f <= int of g
+			- |f| is integrable and |int of f from a to b| <= int of |f| from a to b
+		- int of f from a to b = - int of f from b to a
+		- composition
+			- f is integrable on [a, b] and bounded and phi is cont on [-M, M] then phi(f(x)) is integrable 
+	- Fundamental Theorem of Calculus
+		- Part I
+			- the integral of f is F(b) - F(a) assuming f is integrable and F is its anti-derivative
+		- Part II
+			- define F(x) as the integration of f from x to a (the lower bound)
+			- Then F is cont on [a,b]
+			- Furthermore if f is continuous at c, then F is differentiable at c with F'(c) = f(c)
+		- Substitution
+			- chain rule and FTOC II on G compose f
+		- Integration by parts
+			- product rule on P=fg and FTOC I
+- Lebagsue Criterion
+	- A is Measure 0
+		- for all eps > 0, there is a countable collection of open intervals O which cover A and total length of O is less than eps
+		- any finite set is measure 0
+			- define eps/2k around each x where k is number of them
+		- any countable set is measure 0
+			- define eps/2^n+1 around each x
+	- alpha continuous
+		- replace eps with alpha which is fixed
+		- delta > 0 => y, z in neighborhood_delta(x) then |f(y) - f(z)| < alpha
+		- uni alpha cont, |y - z | < delta => |f(y) - f(z)| < alpha
+	- Lebesgue criterion
+		- f is bounded, f is riemann integrable iff set of discontinuity for f is measure 0

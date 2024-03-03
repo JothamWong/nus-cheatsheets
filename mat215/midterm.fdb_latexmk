@@ -1,0 +1,17 @@
+# Fdb version 3
+["pdflatex"] 1696396796 "/Users/jotham/School/cheatsheets/mat215/midterm.tex" "midterm.pdf" "midterm" 1696396796
+  "/Users/jotham/School/cheatsheets/mat215/midterm.tex" 1696396796 79 60113a5164df848db9f2ea72b4627c9a ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/usr/local/texlive/2022/texmf-dist/tex/latex/base/article.cls" 1636758526 20144 8a7de377ae7a11ee924a7499611f5a9d ""
+  "/usr/local/texlive/2022/texmf-dist/tex/latex/base/size10.clo" 1636758526 8448 96f18c76bf608a36ee6fbf021ac1dd32 ""
+  "/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1644269979 29921 d0acc05a38bd4aa3af2017f0b7c137ce ""
+  "/usr/local/texlive/2022/texmf-dist/web2c/texmf.cnf" 1646502317 40171 cdab547de63d26590bebb3baff566530 ""
+  "/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1647878959 4410336 7d30a02e9fa9a16d7d1f8d037ba69641 ""
+  "/usr/local/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1667813074 2826441 7978ef6ac07ebbe0ec8a6e452ffc01f3 ""
+  "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
+  "midterm.aux" 1696396796 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "midterm.tex" 1696396796 79 60113a5164df848db9f2ea72b4627c9a ""
+  (generated)
+  "midterm.aux"
+  "midterm.log"
+  "midterm.pdf"

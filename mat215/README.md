@@ -1,0 +1,1 @@
+Unfortunately, reference sheets are not allowed for midterms.

@@ -1,0 +1,1567 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage{ifthen}
+\usepackage[a4paper,margin=3mm,landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{newtxtext} 
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage[table]{xcolor}
+\usepackage{vwcol}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{calc}
+\usepackage{mathtools}
+\usepackage{nicematrix}
+% for relations
+\usepackage{cancel}
+\usepackage{ mathrsfs }
+\graphicspath{ {./images/} }
+\setlist{nosep}
+
+\pdfinfo{
+  /Title (CS1231S.pdf)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (Seamus)
+  /Subject (Example)
+  /Keywords (pdflatex, latex,pdftex,tex)}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}
+}
+
+% redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}%
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand\rmdefault{\sfdefault}
+% makes nested numbering (e.g. 1.1.1, 1.1.2, etc)
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+\renewcommand\labelitemii{•}
+%  for logical not operator
+\renewcommand{\lnot}{\mathord{\sim}}
+\renewcommand{\bf}[1]{\textbf{#1}}
+\newcommand{\abs}[1]{\vert #1 \vert}
+\newcommand{\Mod}[1]{\ \mathrm{mod}\ #1}
+
+\makeatother
+\definecolor{myblue}{cmyk}{1,.72,0,.38}
+\everymath\expandafter{\the\everymath \color{myblue}}
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\let\iff\leftrightarrow
+\let\Iff\Leftrightarrow
+\let\then\rightarrow
+\let\Then\Rightarrow
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+%% this changes all items (enumerate and itemize)
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+
+%My Environments
+\newtheorem{example}[section]{Example}
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols}{4}
+
+
+% multicol parameters
+% These lengths are set only within the two main columns
+\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\begin{center}
+    \fbox{%
+        \parbox{0.8\linewidth}{\centering \textcolor{black}{
+            {\Large\textbf{CS1231S}}
+            \\ \normalsize{AY20/21 sem 1}}
+            \\ {\footnotesize \textcolor{myblue}{github.com/jovyntls}} 
+        }%
+    }
+\end{center}
+
+\section{01. PROOFS}
+\subsection{sets of numbers}
+    $\mathbb{N}$ : natural numbers ($\mathbb{Z}_{\geq 0}$)
+\\* $\mathbb{Z}$ : integers
+\\* $\mathbb{Q}$ : rational numbers
+\\* $\mathbb{R}$ : real numbers
+\\* $\mathbb{C}$ : complex numbers
+
+\subsection{basic properties of integers}
+\begin{center}
+    closure (under addition and multiplication)
+    \\* $x+y \in \mathbb{Z} \land xy \in \mathbb{Z}$
+
+    commutativity
+    \\* $a + b = b + a \land ab = ba$
+
+    associativity
+    \\* $a + b + c = a + (b + c) = (a + b) + c$
+    \\* $abc = a(bc) = (ab)c$
+
+    distributivity
+    \\* $a(b + c) = ab + ac$
+
+    trichotomy
+    \\* $(a < b) \lor (a > b) \lor (a = b)$
+
+    transitive law
+    \\* $(a < b) \land (b < c) \implies (a < c)$
+\end{center}
+ 
+\subsection{definitions}
+\begin{center}
+    even/odd
+    \\* $n \text{ is even} \iff \exists k \in \mathbb{Z} \mid n = 2k$
+    \\* $n \text{ is odd} \iff \exists k \in \mathbb{Z} \mid n = 2k + 1$
+
+    prime/composite
+    \\* $n \text{ is prime} \iff n>1 \text{ and } \forall r, s \in \mathbb{Z}^+, n=rs \then (r=n)\lor(r=s)$
+    \\* $n \text{ is composite} \iff n>1 \text{ and } \exists r, s \in \mathbb{Z}^+ s.t. n = rs \text{ and } 1<r<n \text{ and } 1<s<n$
+
+    divisibility ($d$ divides $n$)
+    \\* $d \mid n \iff \exists k \in \mathbb{Z} \mid n = kd$
+
+    rationality
+    \\* $r \text{ is rational} \iff \exists a, b \in \mathbb{Z} \mid r = \frac{a}{b} \text{ and } b \neq 0$
+
+    floor/ceiling
+    \\* $\lfloor x \rfloor$ : largest integer $y$ such that $y \leq x$
+    \\* $\lceil x \rceil$ : smallest integer $y$ such that $y \geq x$
+\subsubsection{rules of inference}
+    \begin{multicols}{2}
+        generalisation
+        \\* $p,\ \therefore p \lor q$
+        
+        specialisation
+        \\* $p \land q,\ \therefore p$
+
+        elimination
+        \\* $p \lor q;\ \ \lnot q,\ \therefore p$
+
+        transitivity
+        \\* $p \then q;\ q \then r;\ \ \therefore p \then r$
+    \end{multicols}
+\end{center}
+
+\section{04. METHODS OF PROOF}
+\subsection{Proof by Exhaustion/Cases}
+\begin{enumerate}
+    \item list out possible cases
+    \begin{enumerate}
+        \item Case 1: $n$ is odd OR If $n = 9$, ...
+        \item Case 2: $n$ is even OR If $n = 16$, ...
+    \end{enumerate}
+    \item therefore ...
+\end{enumerate}
+
+\subsection{Proof by Contradiction}
+\begin{enumerate}
+    \item Suppose that \dots
+    \begin{enumerate}
+        \item <proof>
+        \item \dots but this contradicts \dots
+    \end{enumerate}
+    \item Therefore the assumption that \dots is false. \\* Hence \dots.
+\end{enumerate}
+
+\subsection{Proof by Contraposition}
+\begin{enumerate}
+    \item Contrapositive statement: $\lnot q \then \lnot p$
+    \item let $\lnot q$
+    \begin{enumerate}
+        \item <proof>
+        \item hence $\lnot p$
+    \end{enumerate}
+    \item $\therefore p \then q$
+\end{enumerate}
+
+\subsection{Proof by Construction}
+\begin{enumerate}
+    \item Let $x = 3, y=4, z=5$.
+    \item Then $x, y, z \in \mathbb{Z}_{\geq 1}$ and $x^2 + y^2 = 3^2 + 4^2 = 9 + 16 = 25 = 5^2$.
+    \item Thus $\exists x, y, z \in \mathbb{Z}_{\geq 1}$ such that $x^2 + y^2 = z^2$.
+\end{enumerate}
+
+\subsection{Proof by Induction}
+\begin{enumerate}
+    \item For each $n \in \mathbb{Z}_{\geq 1}$, let $P(n)$ be the proposition "$\dots$"
+    \item (base step) $P(1)$ is true because <manual method>
+    \item (induction step) 
+    \begin{enumerate}
+        \item let $k \in \mathbb{Z}_{\geq 1}$ s.t. $P(k)$ is true
+        \item Then \dots
+        \item proof that $P(k + 1)$ is true - e.g. $P(k+1) = P(k) + term_{k+1}$
+        \item So $P(k + 1)$ is true.
+    \end{enumerate}
+    \item Hence $\forall n \in \mathbb{Z}_{\geq 1} P(n)$ is true by MI.
+\end{enumerate}
+
+\subsection{Proofs for Sets}
+\bf{Equality of Sets (A=B)}
+\begin{enumerate}
+    \item $(\Rightarrow)$
+        \begin{enumerate}
+            \item Take any $z \in A$.
+            \item $\dots$
+            \item $\therefore z \in B$.
+        \end{enumerate}
+    \item $(\Leftarrow)$
+    \begin{enumerate}
+        \item Take any $z \in B$.
+        \item $\dots$
+        \item $\therefore z \in A$.
+    \end{enumerate}
+\end{enumerate}
+
+\bf{Element Method}
+\begin{enumerate}
+    \item $A \cap (B \backslash C) = \{ x : x \in A \land x \in (B \backslash C) \}$ (by def. of $\cap$)
+    \item $= \{ x : x \in A \land (x \in B \land x \notin C)\}$ (by def. of $\backslash$)
+    \item $\dots$
+    \item $= (A \cap B) \backslash C$ (by def. of $\backslash$)
+\end{enumerate}
+
+\subsection{Other Proofs}
+\bf{iff ($A \iff B$)}
+\begin{enumerate}
+    \item ($\Rightarrow$) Suppose $A$.
+    \begin{enumerate}
+        \item $\dots$ <proof> $\dots$
+        \item Hence $A \then B$
+    \end{enumerate}
+    \item ($\Leftarrow$) Suppose $B$.
+    \begin{enumerate}
+        \item $\dots$ <proof> $\dots$
+        \item Hence $B \then A$
+    \end{enumerate}
+\end{enumerate}
+
+\section{02. COMPOUND STATEMENTS}
+\subsection{operations}
+\begin{itemize}
+    \item[1] $\sim$ : negation (not)
+    \item[2] $\land$ : conjunction (and)
+    \item[2] $\lor$ : disjunction (or) - coequal to $\land$
+    \item[3] $\rightarrow$ : if-then
+\end{itemize}
+
+\subsubsection{logical equivalence} 
+\begin{itemize}
+    \item identical truth values in truth table
+    \item definitions
+    \item to show non-equivalence: 
+    \begin{itemize}
+        \item truth table method (only needs 1 row)
+        \item counter-example method
+    \end{itemize}
+\end{itemize}
+
+\subsection{conditional statements}
+    \begin{equation*}
+        \begin{split}
+            \text{hypothesis} &\then \text{conclusion} \\
+            antecedent &\then consequent
+        \end{split}
+    \end{equation*}
+
+\begin{itemize}
+    \item \textbf{vacuously true} : hypothesis is false
+    \item \textbf{implication law} : $p \then q \equiv \lnot p \lor q$
+    \item common if/then statements:
+    \begin{itemize}
+        \item if p then q: $p \then q$
+        \item p if q: $q \then p$
+        \item p only if q: $p \then q$
+        \item p iff q: $p \iff q$
+    \end{itemize}
+\end{itemize}
+
+\begin{multicols}{2}
+    \begin{itemize}
+        \item \bf{contrapositive} : $\lnot q \then \lnot p$ 
+        \item \bf{inverse} : $\lnot p \then \lnot q$ 
+        \item \bf{converse} : $q \then p$ 
+    \end{itemize} 
+    \begin{center}
+        converse $\equiv$ inverse 
+        \\ statement $\equiv$ contrapositive 
+    \end{center}
+\end{multicols}
+\begin{itemize}
+    \item r is a \bf{necessary} condition for s: $\lnot r \then \lnot s$ and $s \then r$
+    \item r is a \bf{sufficient} condition for s: $r \then s$
+    \item \bf{necessary} \& \bf{sufficient} : $\iff$
+\end{itemize}
+
+\subsection{valid arguments}
+\begin{itemize}
+    \item determining validity: construct truth table
+    \begin{itemize}
+        \item valid $\iff$ conclusion is true when premises are true
+    \end{itemize}
+    \item \bf{syllogism} : (argument form) 2 premises, 1 conclusion
+    \item \bf{modus ponens} : $p \then q;\ p;\ \therefore q$
+    \item \bf{modus tollens} : $p \then q;\ \lnot q;\ \therefore \lnot p$
+    \item \bf{sound argument} : is valid \& all premises are true
+\end{itemize}
+
+\subsection{fallacies}
+\begin{center}
+    \begin{multicols}{2}
+        converse error \\*
+        $p \then q$ \\ $q$ \\ $\therefore p$
+
+        inverse error \\*
+        $p \then q$ \\ $\lnot p$ \\ $\therefore \lnot q$
+    \end{multicols}
+\end{center}
+
+\section{03. QUANTIFIED STATEMENTS}
+\begin{itemize}
+    \item \bf{truth set} of $P(x) = \{x \in D \mid P(x)\}$
+    \item $P(x) \Rightarrow Q(x)$ : $\forall x (P(x) \then Q(x))$
+\item $P(x) \Leftrightarrow Q(x)$ : $\forall x (P(x) \iff Q(x))$
+\end{itemize}
+\bf{relation between $\forall, \exists, \land, \lor$}
+\begin{itemize}
+    \item $\forall x \in D, Q(x) \equiv Q(x_1) \land Q(x_2) \land \dots \land Q(x_n)$
+    \item $\exists x \in D \mid Q(x) \equiv Q(x_1) \lor Q(x_2) \lor \dots \lor Q(x_n)$
+\end{itemize}
+
+
+\section{05. SETS}
+\subsection{notation}
+\begin{itemize}
+    \item set roster notation [1]: $\{x_1, x_2, \dots, x_n\}$
+    \item set roster notation [2]: $\{x_1, x_2, x_3, \dots\}$
+    \item set-builder notation: $\{x \in \mathbb{U} : P(x)\}$
+\end{itemize}
+
+\subsection{definitions}
+\begin{itemize}
+    \item \bf{equal sets} : $A = B \iff \forall x (x \in A \iff x \in B)$ 
+    \begin{itemize}
+        \item $A = B \iff (A \subseteq B) \land (A \supseteq B)$
+    \end{itemize}
+    \item \bf{empty set}, $\emptyset$ : $\emptyset \subseteq $ all sets
+    \item \bf{subset} : $A \subseteq B \iff \forall x(x \in A \then x \in B)$
+    \item \bf{proper subset} : $A \subsetneq B \iff (A \subseteq B) \land (A \neq B)$
+    \item \bf{power set} of A : $\mathcal{P}(A) = \{X \mid X \subseteq A\}$
+    \begin{itemize}
+        \item $\vert \mathcal{P}(A) \vert = 2^{\vert A \vert}$, given that A is a finite set
+    \end{itemize}
+    \item \bf{cardinality} of a set, $\mid A \mid$ : number of distinct elements
+    \item \bf{singleton} : sets of size 1
+    \item \bf{disjoint} : $A \cap B = \emptyset$
+\end{itemize}
+
+\subsubsection{methods of proof for sets}
+\begin{itemize}
+    \item direct proof
+    \item element method
+    \item truth table
+\end{itemize}
+
+\subsubsection{boolean operations}
+\begin{itemize}
+    \item \bf{union:} $A \cup B = \{x : x \in A \lor x \in B\}$
+    \item \bf{intersection: } $A \cap B = \{x : x \in A \land x \in B\}$
+    \item \bf{complement} (of B in A): $A \backslash B = \{x : x \in A \land x \notin B\}$
+    \item \bf{complement} (of B): $\bar{B}$ or $B^c = U \backslash B$
+    \begin{itemize}
+        \item set difference law: $A \backslash B = A \cap \bar{B}$
+    \end{itemize}
+\end{itemize}
+
+\subsection{ordered pairs and cartesian products}
+\begin{itemize}
+    \item \bf{ordered pair} : $(x, y)$
+    \begin{itemize}
+        \item $(x, y) = (x', y') \iff x = x' \text{ and } y = y'$
+    \end{itemize}
+    \item \bf{Cartesian product} : $A \times B = \{(x, y) : x \in A \text{ and } y \in B\} $
+    \begin{itemize}
+        \item $\vert A \times B \vert = \vert A \vert \times \vert B \vert$
+    \end{itemize}
+    \item \bf{ordered tuples} : expression of the form $(x_1, x_2, \dots, x_n)$
+\end{itemize}
+
+
+\section{06. FUNCTIONS}
+\subsection{definitions}
+\begin{itemize}
+    \item \bf{function/map} from A to B : assignment of each element of A to exactly one element of B.
+        \begin{itemize}
+            \item $f:A \to B$ : "$f$ is a function from $A$ to $B$"
+            \item $f:x \to y$ : "$f$ maps $x$ to $y$"
+            \item \bf{domain} of f = $A$
+            \item \bf{codomain} of f = $B$
+            \item \bf{range/image} of f = $\{f(x) : x \in A\} $ 
+                \\*$= \{y \in B \mid y= f(x) \text{ for some } x \in A \}$
+        \end{itemize}
+    \item \bf{identity function} on A, $\text{id}_\text{A} : A \to A$ 
+        \begin{itemize}
+            \item $\text{id}_\text{A} : x \to x$ 
+            \item range = domain = codomain = $A$
+            \item (E6.1.24) $f \circ \text{id}_\text{A} = f$ and $\text{id}_\text{A} \circ f = f$
+        \end{itemize}
+        \item \bf{well-defined function} : every element in the domain is assigned to exactly one element in the codomain
+\end{itemize}
+\subsubsection{equality of functions}
+\begin{itemize}
+    \item same codomain and domain 
+    \item for all $x \in$ codomain, same output
+\end{itemize}
+\subsection{function composition}
+\begin{itemize}
+    \item $(g \circ f)(x) = g(f(x))$
+    \item for $(g \circ f)$ to be well defined, codomain of $f$ must be equal to the domain of $g$
+    \item $\times$ commutative
+    \item $\checkmark$ \textbf{associative} - (T6.1.26) $f \circ (g \circ h) = (f \circ g) \circ h$
+\end{itemize}
+\subsection{image \& pre-image}
+for $f:A \to B$
+\begin{itemize}
+    \item if $X \subseteq A$, \bf{image} of X, $f(X) = \{y \in B : y = f(x) \text{ for some } x \in X\}$
+    \item if $Y \subseteq B$, \bf{pre-image} of Y, $f^{-1}(Y) = \{x \in A : y=f(x) \text{ for some } y \in Y \}$
+\end{itemize}
+\subsection{injection \& surjection}
+\begin{itemize}
+    \item \bf{surjective} (onto) : codomain = range
+    \begin{itemize}
+        \item $\forall y \in B, \exists x \in A \ (y = f(x))$
+        \item surjective test: $\forall Y \subseteq B, Y \subseteq f(f^{-1}(Y))$
+    \end{itemize}
+    \item \bf{injective} : one-to-one
+    \begin{itemize}
+        \item $\forall x, x'\in A (f(x) = f(x') \Rightarrow x = x')$
+        \item injective test: $\forall X \subseteq A, X \subseteq f^{-1}(f(X))$
+    \end{itemize}
+    \item \bf{bijective} : both surjective \& injective
+    \begin{itemize}
+        \item bijective $\Iff$ has an inverse (T6.2.28)
+    \end{itemize}
+\end{itemize}
+\subsubsection{inverse}
+\begin{itemize}
+    \item $\forall x \in A, \forall y \in B (f(x) = y \Iff g(y) = x)$
+    \item \textbf{uniqueness} of inverses (P2.6.16)
+    \begin{itemize}
+        \item if $g, g'$ are inverses of $f:A \to B$, then $g=g'$
+    \end{itemize}
+\end{itemize}
+
+
+\section{07. INDUCTION}
+\subsection{mathematical induction}
+to prove that $\forall n \in \mathbb{Z}_{\geq m} (P(n))$ is true, 
+\begin{itemize}
+    \item base step: show that $P(m)$ is true
+    \item induction step: show that $\forall k \in \mathbb{Z}_{\geq m} (P(k) \Rightarrow P(k + 1))$ is true.
+    \begin{itemize}
+        \item induction hypothesis: assumption that $P(k)$ is true 
+    \end{itemize}
+\end{itemize}
+
+\subsection{strong MI}
+to prove that $\forall n \in \mathbb{Z}_{\geq 0} (P(n))$ is true, 
+\begin{itemize}
+    \item base step: show that $P(0), P(1)$ are true
+    \item induction step: show that $\forall k \in \mathbb{Z}_{\geq 0} (P(0) \dots \land P(k+1) \Rightarrow P(k + 2))$ is true.
+\end{itemize}
+justification:
+\begin{itemize}
+    \item $P(0) \land P(1)$ by base case
+    \item $P(0) \land P(1) \then P(2)$ by induction with $k=0$
+    \item $P(0) \land P(1) \land P(2) \then P(3)$ by induction with $k=1$
+    \item $\ \ \ \dotsm $ 
+    \item we deduce that $P(0), P(1), \dots $ are all true by a series of \bf{modus ponens}
+\end{itemize}
+
+\subsection{well-ordering principle}
+\begin{itemize}
+    \item every nonempty subset of $\mathbb{Z}_{\geq 0}$ has a smallest element.
+    \item application: recursion has a base case
+\end{itemize}
+
+\subsection{RECURSION}
+a sequence is \bf{recursively defined} if the definition of $a_n$ involves $a_0, a_1, \dots, a_{n-1}$ for all but finitely many $n \in \mathbb{Z}_{\geq 0}$.
+\subsubsection{recursive definitions}
+e.g. recursive definition for $\mathbb{Z}$
+\begin{enumerate}
+    \item (\bf{base clause}) $0 \in \mathbb{Z}_{\geq 0}$
+    \item (\bf{recursion clause}) If $x \in \mathbb{Z}_{\geq 0}$, then $x + 1 \in \mathbb{Z}_{\geq 0}$
+    \item (\bf{minimality clause}) Membership for $\mathbb{Z}_{\geq 0}$ can be demonstrated by (finitely many) successive applications of the clauses above
+\end{enumerate}
+
+\subsubsection{recursion vs induction}
+\begin{itemize}
+    \item \bf{recursion} - to define the set
+    \item \bf{induction} - to show things about the set
+\end{itemize}
+
+\subsection{well-formed formulas (WFF)}
+\subsubsection{in propositional logic}
+define the set of WFF($\Sigma$) as follows
+\begin{enumerate}
+    \item (base clause) every element $\rho$ of $\Sigma$ is in WFF($\Sigma$)
+    \item (recursion clause) if $x, y$ are in WFF($\Sigma$), then $\lnot x$ and $(x \land y)$ and $(x \lor y)$ are in WFF($\Sigma$)
+    \item (minimality clause) Membership for WFF($\Sigma$) can be demonstrated by (finitely many) successive applications of the clauses above
+\end{enumerate}
+
+\section{08. NUMBER THEORY}
+\subsection{divisibility}
+\begin{center}
+    transitivity of divisibility
+    \\* If $a \mid b$ and $b \mid c$, then $a \mid c$.
+
+    closure lemma (non-standard name)
+    \\* Let $a, b, d, m, n \in \mathbb{Z}$. If $d \mid m$ and $d \mid n$, then $d \mid am + bn$.
+
+    division theorem
+    \\* $\forall n \in \mathbb{Z}$ and $d \in \mathbb{Z}^+$, $\exists ! q, r \in \mathbb{Z}$ s.t.
+    \\* $n = dq + r$ and $0 \leq r < d$
+    \\* $q = n\ div\ d = \lfloor n/d \rfloor$ 
+    \\* $r = n \Mod d = n - dq$
+\end{center}
+
+\subsection{base-b representation}
+\begin{center} 
+    of positive integer $n$ is
+    $(a_\ell a_{\ell - 1} \dots a_0)_b$ 
+    \\* where $\ell \in \mathbb{Z}_{\geq 0}$ and $a_0, a_1, \dots, a_\ell \in \{0, 1, \dots, b - 1\}$ 
+    \\* s.t. $n = a_\ell b^\ell + a_{\ell - 1} b^{\ell - 1} + \dots + a_0 b^0$ and $a_\ell \neq 0$
+\end{center}
+
+\subsection{greatest common divisor}
+\begin{itemize}
+    \item if $m \neq 0$ and $n \neq 0$, then $\gcd(m, n)$ exists and is positive.
+    \begin{itemize}
+        \item gcd: \textit{Euclidean Algorithm}
+        \item integer linear combination: \textit{Extended Euclidean Algorithm}
+    \end{itemize}
+\end{itemize}
+\begin{center}
+    Bezout's Lemma: 
+    \\* For all $m, n \in \mathbb{Z}$ with $n \neq 0$, there exist $s, t \in \mathbb{Z}$ such that $\gcd(m, n) = ms + nt$.
+    \\ Euclid's Lemma: 
+    \\* Let $m, n \in Z^+$. If $p$ is prime and $p \mid mn$, then $p \mid m$ or $p \mid n$.
+\end{center}
+\begin{itemize}
+    \item (E8.4.3) $m \Mod n = 0 \Iff \gcd(m, n) = n$
+    \item (L8.4.11) $\forall x, y, r \in \mathbb{Z}$, $x \Mod y = r \Then \gcd(x, y) = \gcd(y, r)$
+\end{itemize}
+
+\subsection{prime factorization thoerem}
+\begin{itemize}
+    \item \bf{(aka Fundamental Theorem of Arithmetic)}: 
+    Every integer $n \geq 2$ has a unique prime factorization in which the prime factors are arranged in nondecreasing order.
+\end{itemize}
+
+\subsection{modular arithmetic}
+$n \Mod d$ is always non-negative.
+\begin{center}
+    Let $a,b,c \in \mathbb{Z}$ and $n \in \mathbb{Z}^+$.
+    \\ {congruence}
+        \\* $a \equiv b \ (\Mod{n}) \Iff a \Mod{n} = b \Mod{n}$
+        \\* Then $\exists k \in \mathbb{Z} \bigl( a = nk + b$ and $n \mid (a - b) \bigr)$
+    \\ {reflexivity}
+        \\* $a \equiv a \ (\Mod{n})$
+    \\ {symmetry}
+        \\* $a \equiv b \ (\Mod{n}) \then b \equiv a \ (\Mod{n})$
+    \\ {transitivity} 
+        \\* $a \equiv b \ (\Mod{n}) \land b \equiv c \ (\Mod{n}) \then a \equiv c \ (\Mod n)$
+\end{center}
+\subsubsection{addition \& multiplication}
+If $a \equiv b (\Mod{n})$ and $c \equiv d (\Mod{n})$, 
+\begin{itemize}
+    \item (P8.6.6) $a+c \equiv (b+d) (\Mod{n})$
+    \item (P8.6.13) $ac \equiv bd (\Mod{n})$
+\end{itemize}
+
+\subsubsection{additive inverse}
+$b$ is an \textit{additive inverse} of $a \Mod n \Iff a + b \equiv 0 \ (\Mod n)$.
+$b$ is an \textit{additive inverse} of $a \Mod n \Iff b \equiv -a \ (\Mod n)$.
+
+\subsubsection{multiplicative inverse}
+$b$ is a multiplicative inverse of $a \Mod n \Iff ab \equiv 1 \ (\Mod n)$.
+\begin{itemize}
+    \item If $b, b'$ are multiplicative inverses of $a$, then $b \equiv b' \ (\Mod n)$.
+    \item exists $\Iff \gcd(a, n) = 1$.
+    \begin{itemize}
+        \item $a, n$ are coprime
+    \end{itemize}
+    \item to find multiplicative inverse: \textbf{Euclidean Algorithm}
+\end{itemize}
+
+\section{09. EQUIVALENCE RELATIONS}
+\subsection{relations}
+\begin{center}
+    Let $R$ be a relation from $A$ to $B$ and $(x, y) \in A \times B$. Then:
+    \\* $x R y$ for $(x, y) \in R$ and $x \cancel{R} y$ for $(x, y) \notin R$
+\end{center}
+\begin{itemize}
+    \item a relation from $A$ to $B$ is a subset of $A \times B$.
+    \item a \textbf{(binary) relation} on set A is a relation from A to A.
+    \begin{itemize}
+        \item subset of $A^2$
+    \end{itemize}
+    \item \textbf{inverse relation}: $x R^{-1} y \Iff yRx$
+\end{itemize}
+\subsubsection{reflexivity, symmetry, transitivity}
+Let $A$ be a set and $R$ be a relation on $A$.
+\begin{center}
+    reflexive
+    \\* $\forall x \in A \ (x R x)$
+    \\ symmetric
+    \\* $\forall x, y \in A \ (xRy \Then y R x)$
+    \\ transitive
+    \\* $\forall x, y, z \in A \ (xRy \land yRz \Then xRz)$
+\end{center}
+
+\begin{itemize}
+    \item \textbf{equivalence relation}: a relation that is reflexive, symmetric and transitive
+    \item \textbf{equivalence class}: the set of all things equivalent to x
+\end{itemize}
+
+\subsection{equivalence classes}
+Let $A$ be a set and $R$ be an equivalence relation on $A$.
+\begin{itemize}
+    \item $[x]_R$ : \textbf{equivalence class} of $x$ with respect to $R$
+
+        \centerline{$\forall x \in A, [x]_R = \{y \in A : x R y\}$}
+
+    \item $A / R$ : The set of all equivalent classes
+
+        \centerline{$A / R = \{[x]_R : x \in A\}$}
+
+\end{itemize}
+$xRy \Then [x] = [y] \Then [x] \cap [y] \neq \emptyset$
+
+\subsection{partitions}
+\begin{itemize}
+    \item a \textbf{partition} of a set $A$ is a set $\mathscr{C}$ of \textit{non-empty subsets} of $A$ such that
+        \\* $(\geq 1) \ \ \forall x \in A, \ \exists S \in \mathscr{C} (x \in S)$
+        \\* $(\leq 1) \ \ \forall x \in A, \ \forall S, S' \in \mathscr{C} (x \in S \land x \in S' \Then S = S')$
+    \item \textbf{components} : elements of a partition
+    \item every partition comes from an equivalence relation
+\end{itemize}
+
+\subsection{partial orders}
+Let $A$ be a set and $R$ be a relation on $A$.
+\begin{itemize}
+    \item $R$ is \bf{antisymmetric} if $\forall x, y \in A \ (x R y \land y R x \then x = y)$
+    \begin{itemize}
+        \item includes vacuously true cases (e.g. $xRy \Iff x < y$)
+    \end{itemize}
+    \item $x$ and $y$ are \bf{comparable} if $\forall x, y \in A \ (xRy \lor yRx)$
+    \item $R$ is a \bf{(non-strict) partial order} if $R$ is reflexive, antisymmetric and transitive.
+    \begin{itemize}
+        \item $\preccurlyeq$ - partial order
+        \item $x \prec y \Iff x \preccurlyeq y \land x \neq y$ (NOT a partial order)
+        \item Hasse diagram
+    \end{itemize}
+    \item $R$ is a \bf{(non-strict) total order} if $R$ is a partial order and $x$ and $y$ are comparable
+\end{itemize}
+
+\subsection{min and max}
+Let $\preccurlyeq$ be a partial order on a set $A$, and $c \in A$.
+\begin{itemize}
+    \item $c$ is a \bf{minimal element} if $\forall x \in A \ (x \preccurlyeq c \Then c = x)$
+    \begin{itemize}
+        \item nothing is strictly below it
+    \end{itemize}
+    \item $c$ is a \bf{maximal element} if $\forall x \in A \ (c \preccurlyeq x \Then c = x)$
+    \begin{itemize}
+        \item nothing is strictly above it
+    \end{itemize}
+    \item $c$ is the \bf{smallest element} or \bf{minimum element} if $\forall x \in a \ (c \preccurlyeq x)$.
+    \item $c$ is the \bf{largest element} or \bf{maximum element} if $\forall x \in a \ (x \preccurlyeq c)$.
+\end{itemize}
+
+\subsubsection{linearization}
+\begin{center}
+    Let $A$ be a set and $\preccurlyeq$ be a partial order on $A$. 
+    \\* Then there exists a total order $\preccurlyeq^*$ on $A$ such that 
+    \\* $\forall x, y \in A \ (x \preccurlyeq y \Then x \preccurlyeq^* y)$
+\end{center}
+
+\section{10A. COUNTING}
+\subsection{permutations}
+\centerline{$P(n, r) = \frac{n!}{(n-r)!}$ \ \ (also $_nP_r, P^n_r$)}
+\begin{itemize}
+    \item \textbf{multiplication/product rule:} An operation of $k$ steps can be performed in $n_1 \times n_2 \times \dots \times n_k$ ways.
+
+    \item \textbf{addition/sum rule:} Suppose a finite set $A$ equals the union of 
+    $k$ distinct mutually disjoint subsets $A_1, A_2, \dots, A_k$. Then 
+    
+    \centerline{$\abs{A} = \abs{A_1} + \abs{A_2} + \dots + \abs{A_k}$}
+
+    \item \textbf{difference rule:} if $A$ is a finite set and $B \subseteq A$, then
+
+    \centerline{$\abs{A \backslash B} = \abs{A} = \abs{B}$}
+
+    \item \textbf{complement:} $P(\bar{A}) = 1 - P(A)$
+    \item \textbf{inclusion/exclusion rule: } $\abs{A \cup B \cup C} = \abs{A} + \abs{B} + \abs{C} - \abs{A \cap B} - \abs{B \cap C} - \abs{C \cap A} + \abs{A \cap B \cap C}$
+\end{itemize}
+
+\subsubsection{permutations with indistinguishable objects}
+\begin{center}
+    For $n$ objects with $n_k$ of type $k$ indistinguishable from each other, the total number of distinguishable permutations
+    \\* $= \frac{n!}{n_1!n_2!\dots n_k!}$
+\end{center}
+
+\subsection{pigeonhole principle}
+\begin{center}
+    For any function $f$ from a finite set $X$ with $n$ elements to a finite set $Y$ with $m$ elements 
+and for any positive integer $k$, if $k < \frac{n}{m}$, then there is some $y \in Y$ 
+such that $y$ is the image of at least $k + 1$ distinct elements of $X$.
+\end{center}
+\begin{itemize}
+    \item A function from a finite set to a smaller finite set cannot be injective.
+    \item \textbf{presentation:}
+    \begin{itemize}
+        \item There are $m$ <object M> (pigeons) and $n$ <object N>
+        \item Thus, by Pigeonhole Principle, ...
+    \end{itemize}
+\end{itemize}
+
+\subsection{combinations}
+\begin{center}
+    $\binom{n}{r} = \frac{n!}{r! (n-r)!}$ (also $C(n, r)$, $_nC_r$, $C_{n,r}$, $^nC_r$)
+    
+    \textit{r}-combinations from $n$ elements with \textbf{repetition}
+    \\* $= \binom{r + n - 1}{r}$
+\end{center}
+
+\subsubsection{pascal's formula}
+\begin{center}
+    Suppose $n, r \in \mathbb{Z}^+$ with $r \leq n$. Then
+    \\* $\binom{n + 1}{r} = \binom{n}{r-1} + \binom{n}{r}$
+\end{center}
+
+\subsubsection{binomial theorem}
+\begin{center}
+    $(a + b)^n = \sum^n_{k=0} \binom{n}{k} a^{n-k}b^k$
+    \\* binomial coefficient: $\binom{n}{k}$
+\end{center}
+
+\section{10B. PROBABILITY}
+
+\subsection{probability}
+Let $S$ be a sample space. For all events $A$ and $B$ in $S$, a \textit{probability function} $P$ satisfies the following axioms:
+\begin{enumerate}
+    \item $0 \leq P(A) \leq 1$
+    \item $P(\emptyset)=0$ and $P(S) = 1$
+    \item $(A \cap B = \emptyset) \Then \big[P(A \cup B) = P(A) + P(B)\big]$
+    \item $P(\bar{A}) = 1-P(A)$
+    \item $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
+\end{enumerate}
+
+\subsection{expected value}
+For possible outcomes $a_1, a_2, \dots, a_n$ which occur with probabilities $p_1, p_2, \dots, p_n$, the \textbf{expected value} is
+\centerline{$\sum^n_{k=1} = a_kp_k$}
+\begin{itemize}
+    \item \textbf{linearity} of expectation
+    \begin{itemize}
+        \item $E[X+Y] = e[X] + E[Y]$
+        \item $E \left[ \sum\limits^n_{i=1}c_i\cdot X_i \right] = \sum\limits^n_{i=1}(c_i \cdot E[X_i])$
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{conditional probability}
+\begin{tightcenter}
+    The conditional probability of $A$ given $B$,
+    \\* $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$
+\end{tightcenter}
+probability tree:
+    \begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]
+        \node[fill, circle, minimum size=1mm, inner sep=0] (O) at (0,1) {};
+        \node[] (B1) at (2,1.3) {$B_1$};
+        \node[] (B1c) at (2, 0.7) {$B_1^c$};
+        \node[label=right:{$B_2 \rightarrow P(B_1^c \cap B_2) = \dots$}, fill, circle, minimum size=1mm, inner sep=0] (B2) at (5, 1.1) {};
+        \node[label=right:{$B_2^c \rightarrow P(B_1^c \cap B_2^c) = \dots$}, fill, circle, minimum size=1mm, inner sep=0] (B2c) at (5, 0.4) {};
+        \draw (O)  -- node[above, sloped] {\tiny{$P(B_1) = \frac{1}{3}$}} (B1);
+        \draw (O) -- node[below, sloped] {\tiny{$P(B_1^c) = \frac{2}{3}$}} (B1c);
+        \draw (B1c) -- node[above, sloped] {\tiny{$P(B_2\mid B_1^c)$}} (B2);
+        \draw (B1c) -- node[below, sloped] {\tiny{$P(B_2^c\mid B_1^c)$}} (B2c);
+    \end{tikzpicture}
+
+\subsection{Bayes' theorem}
+Suppose a sample space $S$ is a union of mutually disjoint events $B_1, B_2, \dots, B_n$ and $A$ is an event in $S$.
+\\* For $k \in \mathbb{Z}$ and $1 \leq k \leq n$, 
+\begin{center}
+    $P(B_k\mid A) = \frac{P(A \mid B_k) \cdot P(B_k)}{\sum\limits^n_{i=1}\big(P(A \mid B_i) \cdot P(B_i)\big)}$
+\end{center}
+
+\subsubsection{application of Bayes' theorem}
+\begin{center}
+    $P(B_1 \mid A) = \frac{P(A \mid B_1) \cdot P(B_1)}{P(A \mid B_1) \cdot P(B_1) + P(A \mid B_2) \cdot P(B_2)}$
+\end{center}
+Let $A$ be the event that the person test positive for a disease.
+\\* $B_1$: the person actually has the disease.
+\\* $B_2$: the person does not have the disease.
+\begin{tightcenter}
+    \begin{multicols}{2}
+        true positives: $P(B_1\mid A)$
+        \\ false positives: $P(A \mid B_2)$
+        \\ false negatives: $P(\bar{A} \mid B_1)$
+        \\ true negatives: $P(\bar{A} \mid B_2)$
+    \end{multicols}
+\end{tightcenter}
+
+\subsection{independent events}
+\begin{center}
+    $A$ and $B$ are \textbf{independent} \textit{iff}
+    \\* $P(A \cap B) = P(A) \cdot P(B)$
+
+    $A$, $B$ and $C$ are \textbf{pairwise independent} \textit{iff}
+    \\* 1. $P(A \cap B) = P(A) \cdot P(B)$
+    \\* 2. $P(B \cap C) = P(B) \cdot P(C)$
+    \\* 3. $P(A \cap C) = P(A) \cdot P(C)$
+    
+    $A$, $B$ and $C$ are \textbf{mutually independent} \textit{iff}
+    \\* 1. $A$, $B$ and $C$ are pairwise independent
+    \\* 2. $P(A \cap B \cap C) = P(A) \cdot P(B) \cdot P(C)$
+\end{center}
+
+\section{11. GRAPHS}
+\begin{itemize}
+    \item mathematical structures used to model pairwise relations between objects
+\end{itemize}
+\subsection{types of graphs}
+\begin{multicols}{2}
+\begin{center}
+    undirected graph
+    \\
+    \begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]
+        \node[fill, circle, minimum size=1mm, inner sep=0] (O) at (0,0) {};
+        \node[label=above:{$v_1$}, fill, circle, minimum size=1mm, inner sep=0] (v1) at (1.2,1) {};
+        \node[label=left:{$v_2$}, fill, circle, minimum size=1mm, inner sep=0] (v2) at (0,0) {};
+        \node[label=right:{$v_3$}, fill, circle, minimum size=1mm, inner sep=0] (v3) at (1.7,-0.2) {};
+        \draw (v1) -- node[left] {$e_1$} (v2)
+                   -- node[below] {$e_2$} (v3);
+        \draw (v1) to[out=20, in=10] node[right] {$e_3$} (v3);
+        \draw (v3) to[out=-200, in=-90] node[left] {$e_4$} (v1);
+    \end{tikzpicture}
+    \\* $e_1 = \{v_1, v_2\}$
+
+    directed graph
+    \\
+    \begin{tikzpicture}[scale=0.7, every node/.style={transform shape}]
+        \node[fill, circle, minimum size=1mm, inner sep=0] (O) at (0,0) {};
+        \node[label=above:{$v_1$}, fill, circle, minimum size=1mm, inner sep=0] (v1) at (1.2,1) {};
+        \node[label=left:{$v_2$}, fill, circle, minimum size=1mm, inner sep=0] (v2) at (0,0) {};
+        \node[label=right:{$v_3$}, fill, circle, minimum size=1mm, inner sep=0] (v3) at (1.7,-0.2) {};
+        \draw[->,>=stealth] (v1) -- node[left] {$e_1$} (v2);
+        \draw[->,>=stealth] (v2) -- node[below] {$e_2$} (v3);
+        \draw[->,>=stealth] (v1) to[out=20, in=10] node[right] {$e_3$} (v3);
+        \draw[->,>=stealth] (v3) to[out=-200, in=-90] node[left] {$e_4$} (v1);
+        \draw[->,>=stealth] (v1) to[in=-150,out=-230, loop] node[left] {$e_5$} (v1);
+        \draw[->,>=stealth] (v2) to[in=-50,out=-130, loop] node[below] {$e_6$} (v2);
+        \draw[->,>=stealth] (v3) to[in=-80,out=-160, loop] node[below] {$e_7$} (v3);
+    \end{tikzpicture}
+    \\* $e_1 = (v_1, v_2)$
+\end{center}
+\end{multicols}
+
+\subsubsection{undirected graph}
+\begin{itemize}
+    \item denoted by $G = (V, E)$, comprising
+    \begin{itemize}
+        \item nonempty set of \textit{vertices/nodes}, $V = \{v_1, v_2, \dots, v_n\}$
+        \item a set of \textit{edges}, $E = \{e_1, e_2, \cdots, e_k\}$
+    \end{itemize}
+    \item $e = \{v, w\}$ for an undirected edge $E$ incident on vertices $v$ and $w$
+\end{itemize}
+
+\subsubsection{directed graph}
+\begin{itemize}
+    \item denoted by $G = (V, E)$, comprising
+    \begin{itemize}
+        \item nonempty set $V$ of \textit{vertices}
+        \item a set $E$ of \textit{directed edges} (ordered pair of vertices)
+    \end{itemize}
+    \item $e = (v, w)$ for an directed edge $E$ from vertex $v$ to vertex $w$
+\end{itemize}
+
+\begin{center}
+    
+\end{center}
+
+\subsubsection{simple graph}
+\begin{itemize}
+    \item \textbf{undirected graph} with no loops or parallel edges
+\end{itemize}
+
+\subsubsection{complete graph}
+\begin{itemize}
+    \item a complete graph on $n$ vertices, $n>0$, denoted $K_n$, is a simple graph with $n$ vertices and exactly one edge connecting each pair of distinct vertices
+\end{itemize}
+
+\subsubsection{bipartite graph}
+\begin{itemize}
+    \item a simple graph whose vertices can be divided into two disjoint sets $U$ and $V$ such that every edge connects a vertex in $U$ to one in $V$
+    \item \textbf{complete bipartite graph:} $K_{m, n}$
+    \begin{itemize}
+        \item bipartite graph on two disjoint sets $U$ and $V$ such that every vertex in $U$ connects to every vertex in $V$
+        \item denoted $K_{m, n}$ where $\abs{U} = m, \abs{V} = n$
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{subgraph of a graph}
+$H$ is a subgraph of $G \Iff$ 
+\begin{itemize}
+    \item every vertex in $H$ is also a vertex in $G$
+    \item every edge in $H$ is also an edge in $G$
+    \item every edge in $H$ has the same endpoints as it has in $G$
+\end{itemize}
+
+\subsection{degree}
+\begin{itemize}
+    \item \textbf{degree} of $v, deg(v) =$ number of edges incident on $v$
+    \item \textbf{total degree} of $G$ = sum of the degrees of all vertices of $G$
+\end{itemize}
+\centerline{total degree of $G$ = $2 \times $ (number of edges of $G$)}
+\begin{itemize}
+    \item (C10.1.2) the total degree of a graph is even
+    \item (P10.1.3) in any graph there are an even number of vertices of odd degree
+\end{itemize}
+
+\subsection{trails, paths and circuits}
+Let $G$ be a graph; let $v$ and $w$ be vertices of $G$.
+\begin{itemize}
+    \item \textbf{walk} (from $v$ to $w$): a finite alternating sequence of adjacent vertices and edges of $G$.
+    \begin{itemize}
+        \item e.g. $v_0e_1v_1e_2\dots v_{n-1}e_nv_n$
+        \item \textbf{length} of walk: the number of edges, $n$
+    \end{itemize}
+    \item a \textbf{trivial walk} from $v$ to $v$ consists of the single vertex $v$
+    \item \textbf{trail} (from $v$ to $w$): a walk from $v$ to $w$ that does not contain a repeated edge
+    \item \textbf{path} (from $v$ to $w$): a trail that does not contain a repeated vertex
+    \item \textbf{closed walk}: walk that starts and ends at the same vertex
+    \item \textbf{circuit/cycle}: an undirected graph $G(V, E)$ where 
+        \begin{itemize}
+            \item $V = \{x_1, x_2, \dots, x_n\}$
+            \item $E = \scriptstyle \{\{x_1, x_2\}, \{x_2, x_3\}, \dots, \{x_{n-1}, x_n\}, \{x_n, x_1\}\}$
+            \item $n \in \mathbb{Z}_{\geq 3}$
+            \item aka a closed walk that does not contain a repeated edge
+        \end{itemize}
+    \item \textbf{simple circuit/cycle}: does not have any other repeated vertex except the first and last
+    \item (an undirected graph is) \textbf{cyclic} if it contains a loop/cycle
+\end{itemize}
+
+\subsection{connectedness}
+\begin{itemize}
+    \item vertices $v$ and $w$ are connected $\Iff \exists$ a walk from $v$ to $w$
+    \item graph $G$ is connected $\Iff \forall$ vertices $v, w \in V, \exists$ a walk from $v$ to $w$ 
+\end{itemize}
+\subsubsection{connected component}
+\begin{itemize}
+    \item a connected subgraph of the largest possible size
+    \item graph $H$ is a connected component of graph $G \Iff$ 
+    \begin{enumerate}
+        \item $H$ is a subgraph of $G$
+        \item $H$ is connected
+        \item no connected subgraph of $G$ has $H$ as a subgraph and contains vertices or edges that are not in $H$
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Euler circuit}
+\begin{itemize}
+    \item \textbf{Euler circuit}: a circuit that contains every vertex and traverses every edge of $G$ exactly once
+    \item \textbf{Eulerian graph}: graph that contains an Euler circuit
+    \begin{center}
+        \textbf{T10.2.3} 
+        \\* Euler circuit $\Iff$ connected and every vertex has positive even degree
+        \\ \textbf{T10.2.4} 
+        \\* Eulerian graph $\Iff$ every vertex has positive even degree
+    \end{center}
+    \item \textbf{Euler trail} (from $v$ to $w$): a sequence of adjacent edges and vertices that starts at $v$, ends at $w$, 
+        and passes through every vertex of $G$ at least once, and traverses every edge of $G$ exactly once.
+    \begin{center}
+        \textbf{C10.2.5}
+        \\* $\exists$ Euler trail $\Iff$ $G$ is connected; $v, w$ have odd degree;
+        \\* all other vertices of $G$ have positive even degree
+    \end{center}
+\end{itemize}
+
+\subsection{Hamiltonian circuit}
+\begin{itemize}
+    \item \textbf{Hamiltonian circuit} (for $G$): a \textit{simple circuit} that includes every vertex of $G$.
+    \begin{itemize}
+        \item does not need to include all the edges of $G$ (unlike Euler circuit)
+    \end{itemize}
+    \item \textbf{Hamilton(ian) graph}: contains a Hamiltonian circuit
+    \item If $G$ is a Hamiltonian circuit, then $G$ has subgraph $H$ where:
+    \begin{enumerate}
+        \item $H$ contains every vertex of G
+        \item $H$ is connected
+        \item $H$ has the same number of edges as vertices
+        \item every vertex of $H$ has degree 2
+    \end{enumerate}
+\end{itemize}
+
+\subsection{matrix representations of graphs}
+\begin{itemize}
+    \item \textbf{equal matrices} $\Iff$ A and B are the same size and $a_{ij} = b_{ij}$ for all $i = 1, 2, \dots, m$ and $i = 1, 2, \dots, n$
+    \item \textbf{square matrix}: equal number of rows and columns
+    \item \textbf{main diagonal}: all entries $a_{11}, a_{22}, \dots, a_{nn}$
+    \item \textbf{symmetric matrix} $\Iff \forall i, j \in \mathbb{Z}^+_{\leq n} (a_{ij} = a_{ji})$
+\end{itemize}
+
+\subsubsection{adjacency matrix}
+\begin{center}
+The adjacency matrix of a \textbf{directed graph} $G$ 
+    \\* is the $n \times n$ matrix $A = (a_{ij})$ over the set of non-negative integers such that
+    \\* $a_{ij}$ = number of \textbf{arrows} from $v_i$ to $v_j$ $\forall i, j = 1, 2, \dots, n$
+
+
+    \setlength{\columnseprule}{0pt} 
+    \begin{multicols}{2}
+        
+
+        \ 
+        \\ $A =$ \tiny $\begin{bNiceArray}{ccc}%
+            [first-col,
+             first-row,
+             code-for-first-col = \color{black},
+             code-for-first-row = \color{black}]
+              & v_1 & v_2 & v_3 \\ 
+             v_1 & 1 & 0 & 0 \\
+             v_2 & 1 & 1 & 2 \\
+             v_3 & 1 & 0 & 0 \\
+           \end{bNiceArray}$
+    \end{multicols}
+
+    \ 
+\\ The adjacency matrix of an \textbf{undirected graph} $G$ 
+    \\* is the $n \times n$ matrix $A = (a_{ij})$ over the set of non-negative integers such that
+    \\* $a_{ij}$ = number of \textbf{edges} from $v_i$ to $v_j$ $\forall i, j = 1, 2, \dots, n$
+    \\ \ 
+
+    \begin{multicols}{2}
+        \begin{tikzpicture}[scale=0.9, every node/.style={transform shape}]
+            \node[label=right:{$v_4$}, fill, circle, minimum size=1mm, inner sep=0] (v4) at (0,0) {};
+            \node[label=left:{$v_1$}, fill, circle, minimum size=1mm, inner sep=0] (v1) at (0,1) {};
+            \node[label=right:{$v_2$}, fill, circle, minimum size=1mm, inner sep=0] (v2) at (1,1) {};
+            \node[label=right:{$v_3$}, fill, circle, minimum size=1mm, inner sep=0] (v3) at (1,0) {};
+            \draw (v4) -- (v1) -- (v2) -- (v4) -- (v2);
+            \draw (v3) to[out=30, in=300] node[right] {} (v2);
+            \draw (v2) to[out=250, in=150] node[left] {} (v3);
+            \draw (v4) to[in=210,out=150, loop] node[below] {} (v4);
+        \end{tikzpicture}
+
+        $A =$ \tiny $\begin{bNiceArray}{cccc}%
+            [first-col,
+            first-row,
+            code-for-first-col = \color{black},
+            code-for-first-row = \color{black}]
+            & v_1 & v_2 & v_3 & v_4 \\ 
+            v_1 & 0 & 1 & 0 & 1 \\
+            v_2 & 1 & 0 & 2 & 1 \\
+            v_3 & 0 & 2 & 0 & 0 \\
+            v_4 & 1 & 1 & 0 & 1
+        \end{bNiceArray}$
+    \end{multicols}  
+    
+\end{center}
+
+\subsubsection{identity matrix}
+\begin{center}
+    The $n \times n$ identity matrix,
+    \\* $I_n = (\delta_{ij}) = \begin{cases}
+        1, \text{if } i = j
+        \\ 0, \text{if } i \neq j
+    \end{cases}$ for all $i, j = 1, 2, \dots, n$
+\end{center}
+
+\subsection{matrix multiplication}
+\subsubsection{scalar product}
+\begin{center}
+$
+    [a_{i1} \; a_{i2} \; \dots \; a_{in}]
+    \begin{bmatrix} b_{1j} \\ b_{2j} \\ \vdots \\b_{nj}\end{bmatrix}
+    = a_{i1}b_{1j} + a_{i2}b_{2j} + \dots + a_{in}b_{nj}
+$
+\end{center}
+\subsubsection{matrix product}
+\begin{center}
+    Let $A = (a_{ij})$ be an $m \times k$ matrix and $B = (b_{ij})$ be a $k \times n$ matrix with real entries.
+    \\* $AB = (c_{ij}) = \sum^k_{r=1} a_{ir}b_{rj}$
+    \\ \ 
+    \\ $\times$ commutative \quad $\checkmark$ associative
+\end{center}
+
+\subsubsection{nth power of a matrix}
+\begin{center}
+    For any $n \times n$ matrix \textbf{A}, the powers of A are defined as follows:
+    \\* $A^0 = I$ where $I$ is the $n \times n$ identity matrix
+    \\* $A^n = A A^{n-1} \quad \forall n \in \mathbb{Z}_{\geq 1}$
+\end{center}
+
+\subsubsection{counting walks of length N}
+\begin{center}
+    number of walks of length $n$ from $v_i$ to $v_j$ 
+    \\* $=$ the $ij$-th entry of $A^n$
+\end{center}
+
+\subsection{isomorphism}
+\begin{itemize}
+    \item graph isomorphism ($\cong$) is an equivalence relation.
+\end{itemize}
+\begin{center}
+Let $G = (V_G, E_G)$ and $G' = (V_{G'}, E_{G'})$ be two graphs.
+    \\* $G \cong G' \Iff$ there exist bijections $g: V_G \to V_G'$ and $h: E_G \to E_G'$ that preserve
+        the edge-edgepoint functions of $G$ and $G'$ in the sense that $\forall v \in V_G$ and $e \in E_G$,
+    \\* $v$ is an endpoint of $e \Iff g(v)$ is an endpoint of $h(e)$.
+\end{center}
+
+\subsection{planar graph}
+\begin{itemize}
+    \item a graph that can be drawn on a two-dimensional plane without edges crossing.
+    \begin{itemize}
+        \item divides a plane into \textit{regions/faces} (includes 'outside' the graph)
+    \end{itemize}
+\end{itemize}
+    \begin{center}
+        
+        \textbf{Euler's formula}: 
+        \\* For a connected planar simple graph $G = (V, E)$ with $e = \abs{E}$ and $v = \abs{V}$ and $f$ faces,
+        \\* $f = e - v + 2$
+        \\* \textbf{Kuratowski's Theorem}
+        \\* A finite graph is planar $\Iff$ does not contain a subgraph that is a subdivision of the complete graph $K_5$ or the complete bipartite graph $K_3$
+    \end{center}
+
+\subsection{trees}
+\begin{itemize}
+    \item \textbf{tree} $\Iff$ graph that is circuit-free and connected
+    \begin{itemize}
+        \item \textbf{(L10.5.4)} If $G$ is a connected graph with $n$ vertices and $n-1$ edges, then $G$ is a tree.
+    \end{itemize}
+    \item \textbf{trivial tree}: graph that comprises a single vertex
+    \item \textbf{forest} $\Iff$ graph is circuit-free and not connected
+    \begin{itemize}
+        \item a group of trees
+    \end{itemize}
+    \item \textbf{terminal vertex}: a vertex of degree 1
+    \item \textbf{internal vertex}: a vertex of degree greater than 1
+\end{itemize}
+
+\begin{center}
+    \begin{multicols}{3}
+        graph
+        \\*
+        \begin{tikzpicture}[scale=0.7, every node/.style={transform shape}]
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v1) at (0,1) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v2) at (0.3,1.5) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v3) at (0.4,0.7) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v4) at (0.6,1.2) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v5) at (0.6,0.2) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v6) at (1,0.6) {};
+            \draw (v3) -- (v1) -- (v2) -- (v4) -- (v3) -- (v5) -- (v6);
+        \end{tikzpicture}
+        
+        tree
+        \\*
+        \begin{tikzpicture}[scale=0.7, every node/.style={transform shape}]
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v1) at (0,1) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v2) at (0.3,1.5) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v3) at (0.4,0.7) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v4) at (0.6,1.2) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v5) at (0.6,0.2) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v6) at (1,0.6) {};
+            \draw (v5) -- (v3) -- (v1) -- (v2) -- (v4) -- (v6);
+        \end{tikzpicture}
+        
+        forest
+        \\*
+        \begin{tikzpicture}[scale=0.7, every node/.style={transform shape}]
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v1) at (0,1) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v2) at (0.3,1.5) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v3) at (0.4,0.7) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v4) at (0.6,1.2) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v5) at (0.6,0.2) {};
+            \node[fill, circle, minimum size=1mm, inner sep=0] (v6) at (1,0.6) {};
+            \draw (v1) -- (v2);
+            \draw (v5) -- (v3) -- (v4) -- (v6);
+        \end{tikzpicture}
+    \end{multicols}
+\end{center}
+
+\subsection{rooted trees}
+\begin{itemize}
+    \item \textbf{rooted tree}: a tree in which there is one vertex that is distinguished from the others and is called the root.
+    \item \textbf{level} (of a vertex): the number of edges along the unique path between it and the root
+    \item \textbf{height} (of a rooted tree): the maximum level of any vertex of the tree
+    \item children, parent, siblings, ancestor, decendant
+\end{itemize}
+
+\subsubsection{binary tree}
+\begin{itemize}
+    \item \textbf{binary tree}: a rooted tree in which every parent has at most 2 children
+    \begin{itemize}
+        \item at most one left child and at most one right child
+    \end{itemize}
+    \item \textbf{full binary tree}: a binary tree in which every parent has exactly 2 children
+    \item (left/right) \textbf{subtree}: Given any parent $v$ in a binary tree $T$, 
+        the binary tree whose root is the (left/right) child of $v$, whose vertices consist of the left child of $v$ and all its descendants, 
+        and whose edges consist of all those edges of $T$ that connect the vertices of the left subtree.
+\end{itemize}
+\begin{center}
+    \textbf{T10.6.1}: Full Binary Tree Theorem
+    \\* If $T$ is a full binary tree with $k$ internal vertices, then $T$ has a total of $2k + 1$ vertices and has $k+1$ terminal vertices.
+\end{center}
+
+\subsubsection{binary tree traversal}
+\noindent
+\begin{minipage}[c]{0.3\linewidth}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.5, every node/.style={transform shape}]
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (F) at (0,0) {F};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (B) at (-1,-0.5) {B};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (G) at (1,-0.5) {G};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (A) at (-1.5,-1.2) {A};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (D) at (-0.5,-1.2) {D};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (I) at (1.5,-1.2) {I};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (C) at (-1,-1.9) {C};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (E) at (0,-1.9) {E};
+            \node[draw, circle, minimum size=5mm, inner sep=0pt, outer sep=0pt] (H) at (1,-1.9) {H};
+            \draw[-{Latex[angle=60:3pt]}] (F) -- (B);
+            \draw[-{Latex[angle=60:3pt]}] (F) -- (G);
+            \draw[-{Latex[angle=60:3pt]}] (B) -- (A);
+            \draw[-{Latex[angle=60:3pt]}] (B) -- (D);
+            \draw[-{Latex[angle=60:3pt]}] (D) -- (C);
+            \draw[-{Latex[angle=60:3pt]}] (D) -- (E);
+            \draw[-{Latex[angle=60:3pt]}] (G) -- (I);
+            \draw[-{Latex[angle=60:3pt]}] (I) -- (H);
+        \end{tikzpicture}
+        \\ {\tiny\textit{F-B-G-A-D-I-C-E-H}}
+    \end{center}
+\end{minipage} % no space if you would like to put them side by side
+\begin{minipage}[c]{0.65\linewidth}\color{black}
+    \textbf{Breadth-First Search (BFS)}
+    \begin{itemize}
+        \item starts at the root 
+        \item visits its adjacent vertices
+        \item visits the next level
+    \end{itemize}
+\end{minipage}
+
+\ 
+\\ \textbf{Depth-First Search (DFS)}
+\begin{itemize}
+    \item \textbf{pre-order}
+    \begin{itemize}
+        % \item process the root (or current vertex)
+        % \item traverse the left subtree recursively
+        % \item traverse the right subtree recursively
+        \item current vertex $\then$ left subtree $\then$ right subtree
+    \end{itemize}
+    \item \textbf{in-order}
+    \begin{itemize}
+        \item left subtree $\then$ current vertex $\then$ right subtree
+    \end{itemize}
+    \item \textbf{post-order}
+    \begin{itemize}
+        \item left subtree $\then$ right subtree $\then$ current vertex 
+    \end{itemize}
+\end{itemize}
+\begin{center}
+    \begin{multicols}{3}
+        \textit{pre-order DFS}
+        \includegraphics[width=0.9\linewidth]{cs1231s-ch11-preorder}
+        \\* {\tiny\textbf{F-B-A-D-C-E-G-I-H}}
+        
+        \textit{in-order DFS}
+        \includegraphics[width=0.9\linewidth]{cs1231s-ch11-inorder}
+        \\* {\tiny\textbf{A-B-C-D-E-F-G-H-I}}
+        
+        \textit{post-order DFS}
+        \includegraphics[width=0.9\linewidth]{cs1231s-ch11-postorder}
+        \\* {\tiny\textbf{A-C-E-D-B-H-I-G-F}}
+    \end{multicols}
+\end{center}
+
+\subsection{spanning trees}
+\begin{itemize}
+    \item \textbf{spanning tree} (for a graph $G$): a subgraph of $G$ that contains every vertex of $G$ and is a tree.
+    \begin{itemize}
+        \item $w(e)$ - weight of edge $e$
+        \item $w(G)$ - total weight of $G$
+    \end{itemize}
+    \item \textbf{weighted graph}: each edge has an associated positive real number weight
+    \begin{itemize}
+        \item \textbf{total weight}: sum of the weights of all edges
+    \end{itemize}
+    \item \textbf{minimum spanning tree}: least possible total weight compared to all other spanning trees
+\end{itemize}
+
+\subsubsection{Kruskal's algorithm}
+For a connected weighted graph $G$ with $n$ vertices:
+\begin{enumerate}
+    \item initialise $T$ to have all the vertices of $G$ and no edges.
+    \item let $E$ be the set of all edges in $G$; let $m = 0$
+    \item while $(m < n - 1)$
+    \begin{enumerate}
+        \item find and remove the edge $e$ in $E$ of least weight
+        \item if adding $e$ to the edge set of $T$ does not produce a circuit:
+        \begin{enumerate}
+            \item add $e$ to the edge set of $T$
+            \item set $m = m + 1$
+        \end{enumerate}
+    \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Prim's algorithm}
+For a connected weighted graph $G$ with $n$ vertices:
+\begin{enumerate}
+    \item pick any vertex $v$ of $G$ and let $T$ be the graph with this vertex only
+    \item let $V$ be the set of all vertices of $G$ except $v$
+    \item for ($i = 0$ to $n-1$)
+    \begin{enumerate}
+        \item find the edge $e$ in $G$ with the least weight of all the edges connected to $T$.
+            let $w$ be the endpoint of $e$.
+        \item add $e$ and $w$ to the edge and vertex sets of $T$
+        \item delete $w$ from $v$
+    \end{enumerate}
+\end{enumerate}
+
+\end{multicols}
+
+\pagebreak
+
+\begin{center}
+    \begin{tabular}{>{\color{black}}r | c | c}
+        \multicolumn{3}{>{\color{black}}c}{LOGICAL EQUIVALENCES} 
+        \\ \hline 
+        commutative laws 
+            & $p \land q \equiv q \land p$
+            & $p \lor q \equiv q \lor p$
+        \\ associative laws
+            & $(p \land q) \land r \equiv p \land (q \land r)$
+            & $(p \lor q) \lor r \equiv p \lor (q \lor r)$
+        \\ distributive laws
+            & $p \land (q \lor r) \equiv (p \land q) \lor (p \land r)$
+            & $p \lor (q \land r) \equiv (p \lor q) \land (p \lor r)$
+        \\ identity laws
+            & $p \land true \equiv p$
+            & $p \lor false \equiv p$
+        \\ idempotent laws
+            & $p \land p \equiv p$
+            & $p \lor p \equiv p$
+        \\ universal bound laws
+            & $p \lor true \equiv true$
+            & $p \land false \equiv false$
+        \\ negation laws
+            & $p \lor \lnot p \equiv true$
+            & $p \land \lnot p \equiv false$
+        \\ double negation law
+            & $\lnot (\lnot p) \equiv p$
+            & —
+        \\ absorption laws
+            & $p \lor (p \land q) \equiv p$
+            & $p \land (p \lor q) \equiv p$
+        \\ De Morgan's Laws
+            & $\lnot (p \lor q) \equiv \lnot p \land \lnot q $
+            & $\lnot (p \land q) \equiv \lnot p \lor \lnot q$
+     \end{tabular}
+     \quad
+     \begin{tabular}{>{\color{black}}r | c | c}
+        \multicolumn{3}{>{\color{black}}c}{SET IDENTITIES} 
+        \\ \hline 
+        commutative laws 
+            & $A \cap B = B \cap A$
+            & $A \cup B = B \cup A$
+        \\ associative laws
+            & $(A \cap B) \cap C = A \cap (B \cap C)$
+            & $(A \cup B) \cup C = A \cup (B \cup C)$
+        \\ distributive laws
+            & $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$
+            & $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$
+        \\ identity laws
+            & $A \cap U = A$
+            & $A \cup \emptyset = A$
+        \\ idempotent laws
+            & $A \cap A = A$
+            & $A \cup A = A$
+        \\ universal bound laws
+            & $A \cap \emptyset = \emptyset$
+            & $A \cup U = U$
+        \\ complement laws
+            & $A \cap \overline{A} = \emptyset$
+            & $A \cup \overline{A} = U$
+        \\ double \bf{complement} law
+            & $\overline{(\overline{A})} = A$
+            & ---
+        \\ absorption laws
+            & $A \cup (A \cap B) = A$
+            & $A \cap (A \cup B) = A$
+        \\ De Morgan's Laws
+            & $\overline{A \cup B} = \overline{A} \cap \overline{B}$
+            & $\overline{A \cap B} = \overline{A} \cup \overline{B}$
+     \end{tabular}
+\end{center}
+\begin{center}
+    % \hrulefill \\
+    \dotfill
+\end{center}
+\begin{multicols}{3}
+    \section{proven:}
+    \subsection{number theory}
+    \begin{itemize}
+        \item E1.1 - the product of 2 consecutive odd numbers is always odd.
+        \item E1.5 - the difference between 2 consecutive squares is always odd
+        \item E1.4 - the sum of any 2 even integers is even
+        \item T4.6.1 - there is no greatest integer
+        \item T8.2.8 - there are infinitely many prime numbers
+        \item T4.3.1 - for all positive integers $a$ and $b$, if $a \vert b$, then $a \leq b$.
+        \item P4.6.4 - for all integers $n$, if $n^2$ is even then $n$ is even
+        \item T4.2.1 - all integers are rational numbers
+        \item T4.2.2 - the sum of any 2 rational numbers is rational
+        \item E1.7 - there exist irrational numbers $p$ and $q$ such that $p^q$ is rational
+        \item T4.7.1 - $\sqrt{2}$ is irrational.
+        \item T4.3.2 - the only divisors of $1$ are $1$ and $-1$.
+    \end{itemize}
+    \textbf{divisibility}
+    \begin{itemize}
+        \item L8.1.5 - Let $d, n \in \mathbb{Z}$ with $d \neq 0$. Then $d \mid n \Iff n/d \in \mathbb{Z}$ 
+        \item L8.1.9 - Let $d, n \in \mathbb{Z}$. If $d \mid n$, then $-d \mid n$ and $d \mid -n$ and $-d \mid -n$ 
+        \item L8.1.10 - Let $d, n \in \mathbb{Z}$. If $d \mid n$ and $d \neq 0$, then $\vert d \vert \leq \vert n \vert$ 
+        \item L8.2.5 - \bf{Prime Divisor Lemma} (non-standard name):
+        \begin{itemize}
+            \item Let $n \in \mathbb{Z}_{\geq 2}$. Then $n$ has a prime divisor.
+        \end{itemize}
+        \item P8.2.6 - \bf{sizes of prime divisors}: 
+        \begin{itemize}
+            \item Let $n$ be a composite positive integer. Then $n$ has a prime divisor $p \leq \sqrt{n}$.
+        \end{itemize}
+    \end{itemize}
+    \textbf{base-b representation}
+    \begin{itemize}
+        \item T8.3.13 - $\forall n \in \mathbb{Z}^+, \exists ! \ell \in \mathbb{Z}_{\geq 0}$ and $a_0, a_1, \dots, a_\ell \in \{0, 1, \dots, b - 1\}$ 
+        such that <the definition of base-b representation> holds.
+    \end{itemize}
+
+    \subsection{logic}
+    \begin{itemize}
+        \item T3.2.1 - negation of a universal statement: 
+        \begin{itemize}
+            \item $\lnot (\forall x \in D, P(x)) \equiv \exists x \in D \mid \lnot P(x)$
+        \end{itemize}
+        \item T3.2.2 - negation of an existential statement: 
+        \begin{itemize}
+            \item $\lnot (\exists x \in D \mid P(x)) \equiv \forall x \in D, \lnot P(x)$
+        \end{itemize}
+    \end{itemize}
+
+    \subsection{sets}
+    \begin{itemize}
+        \item T5.1.14 - there exists a unique set with no element. It is denoted by $\emptyset$.
+        \item E5.3.7 - for all $A, B$: $(A \cap B) \cup (A \backslash B) = A$
+        \item T5.3.11(1) - let $A, B$ be disjoint finite sets. Then $\vert A \cup B \vert = \vert A \vert + \vert B \vert$
+        \item T5.3.11(2) - let $A_1, A_2, \dots, A_n$ be pairwise disjoint finite sets. Then $\vert A_1 \cup A_2 \cup \dots \cup A_n \vert = \vert A_1 \vert + \vert A_2 \vert + \dots + \vert A_n \vert$
+        \item T5.3.12 - \bf{Inclusion-Exclusion Principle}: 
+        \begin{itemize}
+            \item for all finite sets $A$ and $B$, $\vert A \cup B \vert = \vert A \vert + \vert B \vert - \vert A \cap B \vert$
+        \end{itemize} 
+    \end{itemize}
+
+    \subsection{induction}
+    \begin{itemize}
+        \item L7.3.19 - If $x \in \text{WFF}^+(\Sigma)$, then assigning false to all elements of $\Sigma$ makes $x$ evaluate to false.
+        \item T7.3.20 - $\lnot( \forall x \in \text{WFF}(\Sigma), \exists y \in \text{WFF}^+(\Sigma) \ \ y \equiv x ) \equiv$
+            $\exists x \in \text{WFF}(\Sigma) \ \ \forall y \in \text{WFF}^+(\Sigma) \ \ y \not\equiv x$
+            aka $\lnot$ (not) must be included in the definition of WFF.
+    \end{itemize}
+
+    \subsection{relations}
+    \begin{itemize}
+        \item E9.2.11 - The equality relation $R$ on a set $A$ has equivalence classes of the form $[x] = \{y \in A : x = y \} = \{x\}$ where $x \in A$
+        \item T9.3.4 - Let $R$ be an equivalence relation on a set $A$. Then $A / R$ is a partition of A.
+        \item T9.3.5 - If $\mathscr{C}$ is a partition of $A$, then there is an equivalence relation of $R$ on $A$ such that $A/R = \mathscr{C}$.
+        \item L9.5.5 - Consider a partial order $\preccurlyeq$ on set $A$. 
+        \begin{itemize}
+            \item A smallest element is minimal.
+            \item There is at most one smallest element.
+        \end{itemize}
+    \end{itemize}
+    
+    \subsection{graphs}
+    \begin{itemize}
+        \item L10.2.1 - Let $G$ be a graph.
+        \begin{itemize}
+            \item L10.2.1a - If $G$ is connected, then any two distinct vertices of $G$ can be connected by a path
+            \item L10.2.1b - If vertices $v$ and $w$ are part of a circuit in $G$ and one edge is removed from the circuit, then there still exists a trail from $v$ to $w$ in $G$.
+            \item L10.2.1c - If $G$ is connected and $G$ contains a circuit, then an edge of the circuit can be removed without disconnecting $G$.
+        \end{itemize}
+        \item L10.5.1 - Any non-trivial tree has at least one vertex of degree 1.
+        \item T10.5.2 - Any tree with $n$ vertices $(n>0)$ has $n-1$ edges.
+        \item L10.5.3 - If $G$ is any connected graph, $C$ is any circuit in $G$, and one of the edges of $C$ is removed from $G$, then the graph that remains is still connected.
+        \item L10.5.4 - If $G$ is a connected graph with $n$ vertices and $n-1$ edges, then $G$ is a tree.
+        \item T10.6.1 - If $T$ is a full binary tree with $k$ internal vertices, then $T$ has a total of $2k + 1$ vertices and has $k+1$ terminal vertices.
+        \item T10.6.2 - For non-negative integers $h$, if $T$ is any binary tree with height $h$ and $t$ terminal vertices, then $t \leq 2^h$.
+        \item P10.7.1 - 
+        \begin{enumerate}
+            \item Every connected graph has a spanning tree.
+            \item Any two spanning trees for a graph have the same number of edges
+        \end{enumerate} 
+    \end{itemize}
+
+\begin{center}
+    \fbox{%
+        \parbox{0.3\linewidth}{\textcolor{black}{%
+            {\large abbreviations}
+            \begin{itemize}
+                \item L - lemma
+                \item E - example
+                \item P - proposition
+                \item T - theorem
+            \end{itemize}
+        }}%
+    }
+\end{center}
+\end{multicols}
+
+\end{document}

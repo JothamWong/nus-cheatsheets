@@ -1,0 +1,54 @@
+% tightcenter
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+    }{%
+  \end{center}
+}
+
+% boxed
+\newenvironment{tightbox}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+    \begin{tabular}{|@{\hspace{\dimexpr\fboxsep+0.5\arrayrulewidth}}c@{\hspace{\dimexpr\fboxsep+0.5\arrayrulewidth}}|}
+      \hline
+    }
+    {%
+    \\ \hline
+    \end{tabular}
+  \end{center}
+}
+
+% fixed width box
+\newenvironment{fixedbox}[1][0.7]{
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+    \begin{tabular}{|>{\centering\arraybackslash}m{#1\linewidth}|}
+    \hline
+  }{
+  \\ \hline
+  \end{tabular}
+  \end{center}
+}
+
+% definition of a new term
+\usepackage{soul}
+\definecolor{paleyellow}{RGB}{251,243,218}
+\newcommand{\definition}[2][]{\sethlcolor{paleyellow}\hl{\textbf{#2}} #1  $\rightarrow$}
+% inline definition
+\newcommand{\ildefinition}[1]{\sethlcolor{paleyellow}\hl{\textbf{#1}}}
+
+% important note (attention)
+\newcommand{\attention}{{\color{red}\textbf{! }}}
+
+% nice proof
+\newenvironment{niceproof}[1][Proof]
+{%
+  \sbox0{\textit{#1}. }%
+  \list{}{\labelwidth\wd0 \leftmargin\wd0 \labelsep 0pt }
+\item[\usebox0]}
+  {\endlist}
+
