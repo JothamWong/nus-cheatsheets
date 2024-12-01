@@ -30,6 +30,8 @@ If you find any typos please let me know via a GitHub issue! Thank you :)
   - [Jovyn Tan](https://github.com/jovyntls)
 - CS3223
   - [Jotham Wong](https://github.com/jothamwong)
+- CS4224
+  - [Jotham Wong](https://github.com/jothamwong), [Wang Jiefan](https://github.com/Nafeij), [Arnav Aggarwal](https://github.com/arnav-ag) (It's 2 pages in overleaf, but overfilled in local dev)
 - CS3236
   - [Jovyn Tan](https://github.com/jovyntls)
 - CS4231

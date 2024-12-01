@@ -1,0 +1,772 @@
+\documentclass[8pt, landscape]{extarticle}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage[a4paper,margin=2mm,landscape, headsep=0.5mm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{newtxtext} 
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subfig}
+
+\setlist{nosep}
+% for including images
+\graphicspath{ {./images/} }
+
+\pdfinfo{
+  /Title (CS3223.pdf)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (Jovyn Tan, Jotham Wong)
+  /Subject (CS3223)
+/Keywords (CS3223, nus,cheatsheet,pdf)}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%x
+{\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+  {-1explus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%
+{\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {1ex plus .2ex}%
+{\normalfont\small\bfseries}}%
+\makeatother
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand\rmdefault{\sfdefault}
+%  makes nested numbering (e.g. 1.1.1, 1.1.2, etc)
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+\renewcommand\labelitemii{•}
+\renewcommand\labelitemiii{•}
+
+\definecolor{mathblue}{cmyk}{1,.72,0,.38}
+\everymath\expandafter{\the\everymath \color{mathblue}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+%% adjust spacing for all itemize/enumerate
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,3]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+
+\captionsetup{belowskip=0pt}
+% adding my commands
+\input{../commands/style-helpers.tex}
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{4}
+  % multicol parameters
+  \setlength{\columnseprule}{0.25pt}
+
+  \begin{center}
+    \fbox{%
+      \parbox{0.8\linewidth}{\centering \textcolor{black}{
+          {\textbf{CS4224}}
+        \\ AY24/25 SEM 1}
+        \\ {\footnotesize \textcolor{gray}{github/JothamWong}}
+      }%
+    }
+  \end{center}
+  \subsection{2. Data Partitioning}
+        \begin{enumerate}
+            \item Horizontal Fragmentation (Partition)
+            \begin{enumerate}
+                \item \textbf{Completeness}: $\forall t \in R, \exists R_i \ s.t \ t \in R_i$
+                \item \textbf{Reconstruction}: $R = R_1 \cup \dots \cup R_n$
+                \item \textbf{Disjointness}: $\forall R_i, R_j (i \neq j \Rightarrow R_i \cap R_j = \emptyset)$
+            \end{enumerate}
+            Techniques:
+            \begin{enumerate}
+                \item Range Partitioning (on some predicates)
+                \item Hash Partitioning (Modulo or Consistent Hashing)
+                \begin{itemize}
+                    \item Consistent Hashing allows even distribution or efficient redistribution of non-uniform data, oblivious to server heterogeneity (with virtual nodes). Key $k$ goes to node $N$ if $h(N-1) < h(k) \leq h(N)$.
+                \end{itemize}
+                \item Derived Horizontal Fragmentation (Based on a \textbf{non-nullable foreign key} to another partitioned relation)
+            \end{enumerate}
+            \item Vertical Fragmentation
+            \begin{enumerate}
+                \item Completeness follows. \textbf{Reconstruction}: $R = R_1 \bowtie \dots \bowtie R_n$
+                \item \textbf{Disjointness}: $\forall R_i, R_j (i \neq j \Rightarrow \text{attributes(}R_i\text{)} \cap \text{attributes(}R_j\text{)} = \lbrace\text{key(}R\text{)}\rbrace)$
+            \end{enumerate}
+            \item Purpose is for co-location of data (geographical)
+            \item Optimize for access patterns: Avoid \textbf{distributed update txns} (update multiple partitions), avoid \textbf{scatter-gather} (accesses every partition)
+        \end{enumerate}
+  \subsection{3. Query Processing}
+  \subsubsection{Reduction Techniques}
+  Simplify localized query (by eliminating redundant fragments) following conversion of distributed query
+  \begin{enumerate}
+      \item $R_i = \sigma_{F_i}(R) \land \neg ( F_i \land p ) \implies \sigma_p(R_i) = \emptyset $
+      \item $R_i = \sigma_{F_a \land F}(R) \land S_j = \sigma_{F'_a \land F'}(S) \land \neg ( F_a \land F'_a ) \implies R_i \bowtie_a S_j = \emptyset $
+      \item $S_i = S \ltimes_a R_i $ is a derived horizontal fragment of $R_i \land i \neq j \implies S_i \bowtie_a R_j = \emptyset $
+      \item $R_1, \dots, R_n$ are vertical fragments of $R \land (attr(R_1) - key (R)) \cap L = \emptyset \implies \pi_L(R_1 \bowtie \cdots \bowtie R_n) = \pi_L(R_2 \bowtie \dots \bowtie R_n)$
+  \end{enumerate}
+  \subsubsection{Join Strategies for $R \bowtie_{a} S$}
+    \begin{itemize}
+        \item Case 1: Both R and S partitioned on join key (Collocated)
+        \item Case 2: Only R, not S, is partitioned on join key (Directed or BCast)
+        \item Case 3: Neither R nor S partitioned on join key (Repartitioned or BCast)
+        \item When tackling optimal partitioning, there is no greedy choice. One must enumerate all plans as a suboptimal broadcast now can result in an optimal collocation later.
+    \end{itemize}
+\begin{tabular}{|l|l|}
+\hline
+Join Strategy  & Communication Cost (excl. post-join union cost) \\
+\hline
+Collocated &0 \\
+Directed &$size(R)$ if $R$ is being repartitioned \\
+Repartitioned &$size(R) + size(S)$ \\
+Broadcast &$(n-1) \times size(R)$ if $R$ is being broadcast \\
+\hline
+\end{tabular}
+
+\subsection{4. Query Optimization}
+  Query plan minimizes (CPU, I/O) cost (max. throughput), or latency
+  \subsubsection{Selectivity Factor}
+  \begin{enumerate}
+  \item \textbf{Extended push down of selection over join:} $\sigma_p(R\bowtie_{p'}S)=\sigma_{PR}(R)\bowtie_{p'}\sigma_{PS}(S) \text{ iff } p = PR \land PS, attr(PR) \subseteq attr(R) \land attr(PS) \subseteq attr(S)$
+  \item Joins can be distributed over union: $(E_1 \cup E_2)\bowtie (C_1\cup C_2) = (E_1 \bowtie C_1) \cup (E_1 \bowtie C_2) \cup (E_2 \bowtie C_1) \cup (E_2 \bowtie C_2)$
+  \item \begin{itemize}
+    \item Uniformity assumption: uniform distribution of values in attr
+    \item Independence assumption: attrs are independent
+    \item Inclusion assumption: For $R \bowtie_A S$, if $\lVert{\pi_A (R)}\lVert \leq \lVert{\pi_A (S)}\lVert$ then $\pi_A (R) \subseteq \pi_A(S)$
+  \end{itemize}
+  \item $SF(\sigma_{A=v}(R)) \approx \frac{1}{\lVert \pi_A(R \lVert}$
+  \item $SF(\sigma_{A<v}(R)) \approx \frac{v-\min(\pi_A(R))}{\max(\pi_A(R)) - \min(\pi_A(R)) + 1}$
+  \item $SF(\sigma_{p_1 \land p_2}(R)) \approx SF(\sigma_{p_1}(R)) \times SF(\sigma_{p_2}(R))$
+  \item \textbf{Join selectivity}: $SF(R \bowtie_A S) \approx \frac{1}{max(\lVert \pi_A (R) \lVert, \lVert \pi_A (S) \lVert)}$
+  \begin{itemize}
+    \item Inclusion assumption: Every $R$ tuple participates in join.
+    \item Uniformity assumption: Every $R$ tuple joins with $\frac{\lVert S \lVert}{\lVert \pi_A(S) \lVert}$ tuples.
+  \end{itemize}
+  \item \textbf{Semi-Join selectivity}: $SF(R \ltimes_A S) \approx \frac{\lVert \pi_A(S) \lVert}{\lVert domain(A) \lVert}$
+  \end{enumerate}
+  \subsubsection{Cost estimation}
+    \begin{enumerate}
+        \item CPU/IO Cost = $T_\text{cpu/io} \times \# \text{cpu/io insns}$
+        \item Comm Cost = $T_\text{MSG}\times \#\text{messages} + T_\text{TR}\times\text{size of data}$
+        \begin{itemize}
+            \item $T_\text{MSG}$ = fixed overhead for each message transmission
+            \item $T_\text{TR}$ = time to transmit one data unit
+        \end{itemize}
+    \end{enumerate}
+    
+    \subsubsection{Optimization w/ Semi-Joins}
+    $R \bowtie_A S = (R \bowtie_A \pi_A(S)) \bowtie_A S$
+    \begin{itemize}
+        \item $R \ltimes_A S$ or $R \bowtie_A \pi_A(S)$ eliminates dangling tuples in R wrt $R \bowtie_A S$.
+        \item $R \ltimes_A S$ is beneficial iff $Benefit = T_{TR}\times size(R) \times (1 - SF(R \ltimes_A S) > Cost = T_{MSG} + T_{TR} \times size(\pi_A(S))$
+        % \item Note that the $SF(R\ltimes S)$ is the statistic for the RHS! not the LHS
+        % \begin{align*} 
+        %     T_{TR} \times size(R) \times (1 - SF(R \ltimes_A S)) \\
+        %         - T_{MSG} - T_{TR} \times size(\pi_A(S)) > 0
+        % \end{align*}
+    \end{itemize}
+
+    \subsubsection{Group-By Optimization}
+    \textbf{Refer to exam attachment.} \\
+    For $G_{A,F}(R)$, \\
+    $A \subseteq attrs(R)$ and $F = \{T_1=f_1(e_1),\dots,T_n=f_n(e_n)\}$, where each $A_i$ is a grouping column, each $f_i$ is an aggregate function, each $e_i$ is an expression of attributes in $R$ and each $T_i$ is a column alias. \\
+    $alias(F) = \{T_1, \dots, T_n\}$
+
+\subsection{5. Storage}
+\subsubsection{Log-Structured Merge Table}
+\begin{itemize}
+    \item MemTable + SSTables + commit log
+    \item Deleted records marked with tombstones ($\bot$)
+    \item Flush to new SSTable when MemTable is full
+    \item SSTables are sorted by and associated with range of key values and creation timestamp
+\end{itemize}
+\subsubsection{LSM Compaction}
+\begin{enumerate}
+    \item Remove stale (older) values. Keep tombstones if newer.
+    \item Let $r$ be a record in R and let $V_r$ be the set of all versions of $r \in D$
+    \item \textbf{Size-tiered Compaction Strategy}
+    \begin{itemize}
+        \item Each tier has approximately the same size, and a higher tier is larger than the previous tier.
+        \item Compaction is triggered when the number of SSTables at a tier L reaches a threshold, then all SSTables in Tier L merged into a single SSTable in Tier L+1. Tier L is empty and Tier L + 1 can either be +1 (most cases) or -1 if last level and all are tombstones.
+        \item \textbf{Search:} Top-down from MemTable, Tier 0 tables to Tier m tables, most recent timestamp first.
+        \item There is 1 unique version of r in each table in each tier. So if you have $N_0 + N_1 + N_2$ tables, ($N_0$ = number of tables at tier 0), you have $N_0+N_1+N_2$ versions of r in total.
+    \end{itemize}
+    
+    \item \textbf{Leveled Compaction Strategy}
+    \begin{itemize}
+        \item After merge, split into properly-sized tables.
+        \item SSTables at level 0 may overlap
+        \item $L \geq 1$: SSTables at the same level do not overlap, have the same size
+        \item SSTable at level L overlaps with at most F SSTables in level L+1.
+        \item If the max num records in R is $n$ and the size of each record is $m$ MB, the max size of R is $mn$. Let $L$ denote num levels to store $R$. In worst case, last level of LSM stores a version of each record in $R$. Therefore $F^{L-1}< mn \leq F^{L} \rightarrow log_{F}(mn) \leq L < log_{F}(mn)+1 \rightarrow L = ceil(log_{F}(mn))$
+        \item Increasing F reduces number of levels of LSM which improves worst case I/O for searching. But larger F means more overlapping tables to be merged during compaction, so it increases I/O cost of compaction.
+        \item In LCS, it is possible for 2 tables in L (S1, S2) to overlap with the same table (S3) in L+1. Denote the intersection of S2 and S3 as O3. S2 overlaps with S3 and F-1 other tables in L+1. When compacting S1, if the records in O3 are distributed across two tables (as table is full), S2 will violate invariant. The fix is to identify O3, and if the entire O3 cannot fit into the current new table, move them all to a new table.
+        \item \textbf{Compacting}
+        \begin{itemize}
+            \item $L=0$: \textbf{All} SSTables at level 0 are merged with all overlapping SSTables at L1
+            \item $L \geq 1$: Let v be the ending key of the last compaction. Next SSTable S to compact is first SSTable that starts after v if it exists, otherwise go to smallest start value. Merge S with all overlapping SSTables at level L+1.
+        \end{itemize}
+        \item \textbf{Search:} Top-down from MemTable, Tier 0 tables to Tier m tables, most recent timestamp first. \textbf{Check if key falls in table's range before searching within table.}
+        \item For $V_r$, there is 1 version of each table in Tier 0 and only 1 unique version in Tiers 1 and above. So you have $N_0 + k$ where k is number of Tier 1 and above SSTables.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{LSM Search Optimization}
+Each SSTable file consists of a sequence of data blocks.
+\begin{enumerate}
+    \item \textbf{Sparse Index}: To find the block, build a sparse index of "first key value in $i^{th}$ block" $\rightarrow$ "address of $i^{th}$ block". Search within block of covering range.
+    \item \textbf{Bloom Filter}: To test if a key $x$ exists in a block, build a bloom filter $B$ for each block $S$. If $\exists i \in [1,k] \ s.t. \ h_i(x) = j \text{ and } B[j]=0$, $x\notin S$.
+\end{enumerate}
+
+\subsubsection{Indexing}
+\begin{itemize}
+    \item \textbf{Local Index}: An index for each partition is built.
+    \item This is bad for search: as you need to search the index of each partition
+    \item Better for updates, as you only need to update the index for each partition
+    \item \textbf{Global Index}: The index is a derived partition from the data partition.
+    \item Bad for updates, as the index may not be on the same fragment as the data.
+    \item Good for searching the index, as you only need to search one index server. But bcos data can be on different shards, still may end up querying multiple shards. 
+\end{itemize}
+
+  \subsection{6. Commit Protocols}
+\begin{itemize}
+    \item \textbf{Log} Sequential file of records in \textbf{non-volatile/stable storage} (multiple copies)
+    \item \textbf{Recovery manager}: Supports Abort, Commit and Restart to preserve atomicity and durability of \textbf{local} txns.
+    \begin{itemize}
+        \item \textbf{Abort: Write-ahead logging (WAL) protocol}
+        \begin{itemize}
+            \item Uncommitted update to DB not flushed til log with before-image is flushed.
+            \item Restore log record's before-image in reverse order.
+        \end{itemize}
+        \item \textbf{Commit: Force-at-commit protocol}
+        \begin{itemize}
+            \item Do not commit a Xact until after-images of all its updated records are in stable storage (DB or log). Enforced by writing a \textbf{commit log record} r for Xact and flushing all log records (up to and including r) for Xact to disk.
+            \item An Xact is considered committed if its commit log is written to stable storage
+        \end{itemize}
+        \item \textbf{Restart: Redo + Undo}
+        \begin{enumerate}
+            \item \textbf{Redo Phase:} Scans log records in forward direction to redo updates, keeping track of active txns.
+            \item \textbf{Undo Phase:} Abort active txns.
+        \end{enumerate}
+    \end{itemize}
+    \item \textbf{Commit Protocol:}
+    \begin{itemize}
+        \item Txn coordinator (TC) coordinates with Txn Managers (TMs) to execute txn T at multiple sites, and ensures \textbf{atomicity} of distributed txn.
+        \item \textbf{Log Records:} Log writes are \textbf{forced} or synchronous if it must be flushed to disk before the next message can be sent, else it is not forced/asynchronous.
+        \item \textbf{Site failures:}
+        \begin{itemize}
+            \item Detected by \textbf{timeouts}, which invoke \textbf{termination protocol} at operational sites. Termination protocol is \textbf{non-blocking} if it permits a transaction to commit/abort at sites w/o waiting for recovery.
+            \item On restart, invoke \textbf{recovery protocol} at failed site. Recovery protocol is \textbf{independent} if no communication with another site is necessary to determine how to terminate a txn.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{2PC Protocol}
+Two-Phase commit
+\begin{enumerate}
+    \item Voting phase: TC collects votes from TMs
+    \item Decision phase: TC broadcasts global decision to TMs.
+\end{enumerate}
+2PC is synchronous within one state transition.\\
+\textbf{See exam attachment for state transitions, recovery and termination protocols.}
+
+\textbf{2PC Cooperative Termination Protocol} \\
+
+Reduce probability of blocking by failure in coordinator.
+\begin{itemize}
+    \item TC includes addresses of all participants in "Prepare" msg.
+    \item When a participant P times out in READY state, bcast "Decision-request" msg.
+    \item When another participant receives it, respond as follows:
+    \begin{tabular}{cl}
+        \textbf{State} & \textbf{Actions} \\
+        INITIAL & Replies "Abort"; Unilaterally aborts \\
+        READY & Replies "Uncertain" \\
+        COMMIT & Replies "Commit" \\
+        ABORT & Replies "Abort" \\
+    \end{tabular}
+    \item P terminates txn with decision, if any, and sends it to all participats that replied "Uncertain". Else P remains blocked. 
+\end{itemize}
+
+\textbf{Other blocking scenarios}
+\begin{itemize}
+    \item $C$ fails after sending Global-commit, $P_1$ fails after recieving Global-commit, others are in READY state.
+    \item $C$ fails before recieving any vote, $P_1$ fails after voting, others are in READY state.
+\end{itemize}
+
+\subsubsection{3PC-1 Protocol}
+Three-Phase commit. Non-blocking in absence of comm. or total site failure. \\
+May block in event of total site failure, but correctness is guaranteed.
+\begin{enumerate}
+    \item Voting phase: TC collects votes from TMs
+    \item TC disseminates voting outcome to TMs if there is no abort vote.
+    \item Decision phase: TC broadcasts global decision to TMs.
+\end{enumerate}
+
+\textbf{See exam attachment for state transitions, recovery and termination protocols.} \\
+
+\textbf{3PC Termination Protocol 1}
+
+\begin{enumerate}
+    \item Elect a new coordinator C'.
+    \item C' sends "State-request" msg and obtains current states of participants.
+    \item C' terminates txn as follows:
+    \begin{enumerate}
+        \item If there is some TM in COMMIT,
+        \begin{enumerate}
+            \item C' sends "Global-commit"
+        \end{enumerate}
+        \item else if no Tm is in PRECOMMIT,
+        \begin{enumerate}
+            \item C' sends "Global-abort" to all
+        \end{enumerate}
+        \item else, C' sends "Prepare-to-commit" to TMs in READY state. After recieving "Ready-to-commit" from them, send "Global-commit" to all.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{itemize}
+    \item If any TM times out, elect a new TC.
+    \item If any participant fails, TC will ignore it.
+    \item If a participant recovers during the termination protocol, it's blocked until after the protocol finishes.
+\end{itemize}
+
+\textbf{Handling Total site failure} \\
+Recovering TMs remain blocked until a TM P recovers:
+\begin{itemize}
+    \item \textbf{Case 1:} P recovers independently (it is READY/ABORT/COMMIT). \\
+    P will notify recovered TMs of global decision.
+    \item \textbf{Case 2:} P was the last TM to fail \\
+    P terminates the txns by executing Termination Protocol 1 among recoverd TMs.
+\end{itemize}
+
+\subsubsection{3PC-2 Protocol}
+\textbf{Goal:} Under comm. failure, ensure correctness (consistent decision) made by \textbf{multiple coordinators}.
+
+\textbf{3PC Termination Protocol 2}
+
+\begin{enumerate}
+    \item Elect a new coordinator C'.
+    \item C' sends "State-request" msg and obtains current states of participants.
+    \item C' terminates txn as follows:
+    \begin{enumerate}
+        \item If there is some TM in COMMIT,
+        \begin{enumerate}
+            \item C' sends "Global-commit"
+        \end{enumerate}
+        \item else if there is some TM in ABORT,
+        \begin{enumerate}
+            \item C' sends "Global-abort"
+        \end{enumerate}
+        \item else if there's at least 1 PRECOMMIT, no COMMIT/ABORT \& majority READY+PRECOMMIT states,
+        \begin{enumerate}
+            \item C' sends "Prepare-to-commit" to those not in PRECOMMIT.
+            \item Those recieving change to PRECOMMIT and reply "Ready-to-commit".
+            \item If "Ready-to-commit" msg + PRECOMMIT is majority, C' sends "Global-commit"; else, all \textbf{block}.
+        \end{enumerate}
+        \item else if there's no COMMIT nor ABORT \& majority INITIAL+READY+PREABORT states,
+        \begin{enumerate}
+            \item C' sends "Prepare-to-abort" to those not in PREABORT.
+            \item Those recieving change to PREABORT and reply "Ready-to-abort".
+            \item If "Ready-to-abort" msg + PREABORT is majority, C' sends "Global-abort"; else, all \textbf{block}.
+        \end{enumerate}
+        \item else, all \textbf{block}.
+    \end{enumerate}
+\end{enumerate}
+
+Blocked TMs periodically execute the above protocol, as do failed TMs upon recovery. \\
+3PC-2 is non-blocking in absence of comm. failure, so long as majority of TMs are operational.\\
+Reasoning about whether an operation is forced or not forced, think about what happens if it crashes before it writes the op, does that contradict the global decision?\\
+3PC-1 can global abort even if one P is in pre-commit. C crashes immediately after. Rest of P are in READY and elect new C. Termination protocol.
+
+\subsection{7. Concurrency Control}
+
+\subsubsection{Revision}
+
+\begin{itemize}
+    \item $S$ and $S'$ are \textbf{View equiv.} if
+    \begin{enumerate}
+        \item Every $T_i$ that reads $A$ from $T_j$ in $S$ also reads $A$ from $T_j$ in $S'$.
+        \item For each $A$, the same txn performs the final write in $S'$ as in $S$.
+    \end{enumerate}
+    \item Pairs of accesses conflict if they are on the same obj., are from different txns, and one of them is a write.
+    \item $S$ and $S'$ are \textbf{Conflict equiv.} if they preserve the order of all pairs of conflicting accesses in committed txns.
+    \item $S$ is \textbf{VSS/CSS} if $S$ and some serial (non-interleaved) sched. are \textbf{view/conflict equiv}.
+    \item VSSs with no blind writes are also CSSs.
+    \item If in $S$, every $T$ commits after all $T'$s it reads from, $S$ is a \textbf{recoverable sched.}
+    \item Assume blocked lock reqs. are FIFO queued (no starvation), and checked on each release.
+    \item Terminating a txn removes all its locks from req. queue.
+    \item Writes of $T$s in \textbf{strict scheds.} are not read from or overwritten by another txn until $T$ terminates. Thus they can be recovered with before-images (in logs).
+    \item \textbf{2PL:} Uses S and X-locks, cannot request more locks after releasing first lock.
+    \item \textbf{S2PL:} Can only release locks when terminating.
+    \item \textbf{MVCC:} Read-only txns never block, become blocked, or become aborted. 
+    \item $S$ and $S'$ are \textbf{MV view equiv.} if every $T_i$ that reads $A_k$ from $T_j$ in $S$ also reads $A_k$ from $T_j$ in $S'$.
+    \item Each read in a \textbf{Monoversion scheds.} returns most recent-version write.
+    \item $S$ is \textbf{MVSS} if $S$ and some serial \textbf{monoversion} sched. are \textbf{MV view equiv}.
+    \item S2PL-S $\subset$ 2PL-S $\subset$ CSS $\subset$ VSS $\subset$ MVSS
+    \\
+    \item \textbf{SI:} $R_i(O)$ reads the latest write in $T_i$, if any. Else, they read from the latest $W_j(O)$ where $T_j$ has the largest commit timestamp smaller than $T_i$'s start timestamp.
+    \begin{enumerate}
+        \item \textbf{FCW:} In pairs of concurrent txns, the first txn to commit causes the other to abort.
+        \item \textbf{FUW:} Txns requesting and blocked on an X-lock abort upon commit of the blocker txn. Txns upon obtaining an X-lock abort if they detect it has been updated by a concurrent txn.
+    \end{enumerate}
+    \item SI protocols can produce non-serializable schedules (Write Skew/Read-Only Txn anomaly).
+    \item To disprove SI, check that any concurrent updates must be disjoint. First scan all schedules and find two Txns that write to the same object. Say W4(c), W2(c). Then, you must show that C4 happens before the first operation in T2 or find a counter example by seeing if you can find a chain to any operation before W4(c) in the same local txn.
+    \item To disprove S2PL, check that a txn must release locks.
+\end{itemize}
+
+\subsubsection{Distributed CC}
+
+\begin{itemize}
+    \item Let $T=\{ T_1, \dots T_n\}$ be a set of distributed txns executed over m sites with local schedules $\{ S_1, \dots S_m \}$.
+    \item A schedule S is a \textbf{global schedule} for T and the local schedules if each $S_i$ is a subsequence of S.
+    \item A \textbf{serializable global schedule} S is \textbf{view/conflict equiv.} to some serial schedule $S'$ over T. To approach this, for each local schedule $S_i$, derive a possible serial schedule for each local schedule. If the union of all the serial scheds. are compatible (acyclic) a global serial schedule exists.
+    \item \textbf{C2PL:} Central site manages all lock requests. \\
+    \textbf{Deadlock Detection:} Each site maintains a local \textbf{Wait-For Graph (WFG)}, periodically transimtted to central site to build global \textbf{WFG}.
+    \item \textbf{D2PL:} Each lock is held at the same site as the obj.
+    \item \textbf{CSI:} CC site (different from $TM_A$) assigns start and commit timestamps. Queries from TC to obtain start timestamp also returns latest prior commit timestamp. \\
+    Uses \textbf{FUW}, where X-locks are managed locally by each $TM_A$.
+    \begin{enumerate}
+        \item To read $x$ at Site A, TC sends read req and last commit $T_i$ to $TM_A$. $TM_A$ sends most recent version of x wrt lastcommit timestamp.
+        \item To write $x$ at site A, send write req to $TM_A$. Check if X-lock can be given. if granted, $TM_A$ updates X and sends notif to TC, otherwise $T_i$ is blocked.
+    \end{enumerate}
+    When T commits and releases locks, all $T_i$ blocked by T abort.\\
+    On commit, execute \textbf{2PC variant:}
+    \begin{enumerate}
+        \item TC includes start and commit timestamps of $T_i$ in PREPARE msg.
+        \item On receipt, participants (with obj X-locks held by $T_i$) check for WW-conflicts between $T_i$ and committed concurrent txns (i.e. if version number of obj is between PREPARE start and commit timestamps).
+    \end{enumerate}
+\end{itemize}
+
+\subsection{8. Replication}
+
+\begin{itemize}
+    \item \textbf{One-copy database} = non-replicated database
+    \item \textbf{Mutually consistent} = all replicas of data items have identical values. \\
+    \textbf{Strong:} identical at the end of each update txn; \textbf{Weak:} eventual consistency (end of sched).
+    \item \textbf{Replicated data (RD)}: schedules on replicated database. Vice versa for \textbf{1-copy} schedule.
+    \item $T_j$ reads $x$ from $T_i$ in RD if
+    \begin{enumerate}
+        \item for some copy $x_A$ of $x$, $W_i(x_A)$ precedes $R_j(x_A)$ and
+        \item there is no $W_k(x_A), k \neq i$ that occurs between $W_i(x_A)$ and $R_j(x_A)$
+    \end{enumerate}
+    \item $S_{RD}$ is \textbf{1SR} if it is equivalent to a serial one-copy schedule $S_{1C}$, where equivalence is
+    \begin{enumerate}
+        \item $T_j$ reads $x$ from $T_i$ in $S_{RD}$ iff $T_j$ reads $x$ from $T_i$ in $S_{1C}$ and
+        \item for each final write $W_i(x)$ in $S_{1C}$, $W_i(x_A)$ is a final write in $S_{RD}$ for \textbf{some copy} $x_A$
+    \end{enumerate}
+    \item To check \textbf{1SR}, look at the reads-from relationship for each local schedule and check the precedence graph in the serial schedule for cycles. Then check if final write is satisfied for each serial final write.
+    \item Replication protocols are defined as WHEN+WHERE.
+    \item Eager (synchronous update): Propagates updates to all replicas affected by xact before commit. Enforces strong mutual consistency, ROWA.
+    \item Lazy (async): Xact updates only one replica, updates may propagate later (refresh txn).
+    \begin{itemize}
+        \item Need to preserver order of different refresh txns (as well as writes within txn) across all sites.
+        \item Use the commit timestamp of original txn.
+        \item Sites receiving refresh txn need to grant X-locks.
+    \end{itemize}
+    \item Centralized: Update is applied to master copy and propagated to slave copies.
+    \item Distributed: Update can be applied to any copy and propagated to other copies.
+    \item To distinguish centralized vs distributed, check if T write to another site when it has its own local copy.
+    \item Assume S2PL, statement-based replication.
+    \item Under lazy distributed, Last-Writer-Wins heuristic (timestamp-order) needed to reconcile conflicting concurrent updates by multiple xacts at different sites/copies. i.e. refresh updates with an older txn timestamp than local copy gets ignored. Heuristic can cause non-blind writes (RW-updates) to be lost.
+\end{itemize}
+
+Eager is always 1 copy serializable
+Lazy is not guaranteed to be 1 copy serializable, even when just 1 txn!
+Lazy single-master: read local copy, which can be stale cos master update is async
+Lazy distributed: no 1SR and inconsistent update: multiple xacts can update different copies of same data concurrently at different sites, requires last writer updates (only works for blind writes)
+
+\subsubsection{Handling Failures}
+Single-master replication, with timeout-based detection.
+\begin{itemize}
+    \item \textbf{Failure of slave site:}
+    \begin{enumerate}
+        \item Lazy replication: Sync unavailable ones later when they become available.
+        \item Eager replication: ROWAA. Update available replicas and terminate txn, sync unavailable replicas later
+    \end{enumerate}
+    \item \textbf{Failure of master:} \\
+    \textbf{CAP Theorem:} In a \textbf{P}artitioned network,
+    \begin{enumerate}
+        \item Forfeit \textbf{A}vailability: Wait (block) for master site/network recovery, or
+        \item Forfeit \textbf{C}onsistency: Elect new master. Need to ensure at most one partition can have an operational master; else inconsistency.
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{Quorum Consensus Protocol}
+
+\begin{itemize}
+    \item Assign non-negative weights and version nos. to all copies of an object $O$, which sum to some $Wt(O)$.
+    \item For k-tolerant, $(n-k)w \geq max \lbrace T_w(O), T_r(O)\rbrace$
+    \item \textbf{To Read:}
+    \begin{enumerate}
+        \item Acquire S-locks on a quorum of copies whose sum-of-weights exceed $T_r(O)$
+        \item Return copy within quorum with most recent version no.
+    \end{enumerate}
+    \item \textbf{To Write:}
+    \begin{enumerate}
+        \item Acquire X-locks on a quorum of copies whose sum-of-weights exceed $T_w(O)$
+        \item Get max version no. within quorum, $n$.
+        \item Write to all copies in quorum, setting version no. to $n+1$.
+    \end{enumerate}
+    \item Note that $T_r(O) + T_w(O) > Wt(O)$ and $2 \times T_w(O) > Wt(O)$
+\end{itemize}
+
+\subsection{9. Consistency}
+
+\subsubsection{Pileus}
+
+\begin{enumerate}
+    \item Range-partitions and replicates with lazy centralized: primary and secondary sites. Updates are ordered by commit timestamps and performed at primary sites. Updates are received in timestamp order at secondary sites.
+    \item Concurrency control uses distributed snapshot isolation: prevent concurrent updates, $\text{readTS(t), commitTS(t)}$
+    \item Server maintains the following information:
+    \begin{enumerate}
+        \item \textbf{key-range}: range of keys maintained by server
+        \item \textbf{store}: set of (key, value, timestamp)
+        \item \textbf{highTS}: commit timestamp of latest txn processed by server
+        \item \textbf{lowTS}: timestamp of server's most recent pruning operation
+    \end{enumerate}
+    \item Each primary server additionally maintains
+    \begin{enumerate}
+        \item \textbf{logical clock} for assigning commit timestamps
+        \item \textbf{pending} = list of (Put-set, proposed timestamp) pairs for uncommitted txns
+        \item \textbf{propagating} = queue of (Put-set, commit timestamp) to be async-sent to secondary replicas
+    \end{enumerate}
+    \item \textbf{Pruning old data}: For each object O at server S, all versions of O with commitTS $\leq$ S.lowTS are pruned, \textbf{except for one (w/ latest version)}
+    \item $\text{BeginTx(Consistency level L, key-set KS)}$
+    \begin{enumerate}
+        \item Determine \textbf{readTS(T)} for new Xact T based off L, it determines the snapshot that T accesses for all Get operations.
+        \item If $\text{Get(k)}$ is serviced by server S, S will return the latest version v of key k at S s.t $\text{v.commitTS} \leq \text{readTS(T)}$
+        \item First, compute \textbf{MARTS}: Minimum Acceptable Read Timestamp. As long as $\text{readTS(T)} \leq \text{MARTS(T)}$, L is guaranteed
+        \item A server S is a \textbf{candidate server} for $\text{Get(k)}$ if
+        \begin{enumerate}
+            \item S contains k in its key-range AND
+            \item Either S is a primary server for k or $\text{highTS[S]}\geq \text{MARTS(T)}$
+        \end{enumerate}
+        \item Among the candidate servers for $\text{Get(k)}$, pick S that minimizes latencies, if tie, maximize $\text{highTS[S]}$.
+        \item For each $k_i \in KS$, let $S_i$ denote server selected for $\text{Get(k)}$
+        \item $\text{readTS(T)} = \min\lbrace \text{highTS[S]} | k_i \in KS\rbrace$
+    \end{enumerate}
+    \item $\text{Get(key)}$
+    \begin{enumerate}
+        \item Becomes $\text{Get(key, readTS(T))}$ to S which is processed as
+        \item If S is the primary server for key, S accepts request if $\text{readTS(T)}\ge \text{S.lowTS}$, and S updates its logical clock to max of local clock or readTS(T)
+        \item If S is a secondary server for key, S accepts request if $\text{readTS(T]} \in {[\text{S.lowTS, S.highTS}]}$
+        \item If S accepts the request, then S returns $\text{(v, v.commitTS, S.highTS)}$ where $v$ is the most recent version of key in S with $\text{v.commitTS} \leq \text{readTS(T)}$. Otherwise S rejects the Get request
+    \end{enumerate}
+    \item \textbf{MARTS}: Minimum Acceptable Read Timestamp
+    \item \textbf{Strong}: Contains results of all Xacts that committed before start of T. Let $\text{maxTS}(k_i)$ be max ts among all versions of key $k_i$ in the primary server for $k_i$. $\text{MARTS(T)}=\max\lbrace \text{maxTS}(k_i)|k_i\in KS\rbrace$
+    \item \textbf{Eventual}: In Pileus, this is equivalent to consistent prefix consistency (all writes up till and including the k-th write). In non-pileus, it is an arbitrary subset of the superset of all tables. $\text{MARTS}=0$.
+    \item \textbf{Read-my-writes}: $\text{MARTS(T)}$ = max ts of all previously committed Puts for keys accessed by T in current session
+    \item \textbf{Monotonic Reads}: $\text{MARTS(T)}$ = max ts of all previous Gets (\textbf{any key}, including those not in KS in BeginTx!!!!!!!!!!!!).
+    \item \textbf{Bounded(t)}: Snapshot contains results of all Xacts committed from start t - deltaT to start of t. $\text{MARTS(T)}$ = \textbf{realTimeToLogicalTime(client's clock time - t)}
+    \item \textbf{Causal Consistency}: Snapshot contains results of all Xacts that \textbf{causally precede} T. If $T_1 < T_2$ then $\text{commitTS}(T_1) < \text{commitTS}(T_2)$. $\text{MARTS(T)}$ = max ts of all previous Gets and Puts for any key (!!!) in current session
+    \item \textbf{T1 causally precedes T2} if any of the following hold
+    \begin{enumerate}
+        \item $T_2$ is executed after $T_1$ in the same session
+        \item $T_2$ reads some object written by $T_1$
+        \item $T_1$ and $T_2$ both performed a put on the same object and $T_2$ commits after $T_1$
+        \item There is some Xact $T_3$ where $T_1 < T_3$ and $T_3 < T_2$
+    \end{enumerate}
+    \item $\text{EndTX}$
+    \begin{enumerate}
+        \item Only primary servers with data updated by T will be participants in the 2PC process, \textbf{commit coordinator} (CC) is among them
+        \item Client sends a \textbf{commit request} containing: \textbf{readTS(T)}, set of Puts for T (\textbf{Put-set}), largest commit timestamp among all Gets/Puts in the session (\textbf{LCT} to derive commit timestamp and causal consistency).
+        \item CC partitions Put-Set into $PS_1 \cup \dots \cup PS_n$ where $P_i$ is primary server for keys in $PS_i$.
+        \item When CC receives commit request from client, CC updates local clock to $\max(\text{local clock timestamp, LCT+1})$. Then sends \textbf{prepare-commit} request to each $P_i$ alongside $PS_i$
+        \item When $P_i$ rcvs \textbf{prepare-commit} from CC, $P_i$ sets proposedTimestamp = local clock ts, increments local clock TS, appends $PS_i$ to pending list (list of uncommitted txns) and replies to CC
+        \item From all proposedTS, CC selects max as \textbf{commitTS(T)} and sends \textbf{commitTS(T)} to all participants
+        \item Upon receiving \textbf{commitTS(T)} from CC, $P_i$ updates local clock to $\max(\text{local clock timestamp, commit(TS)+1})$, validates whether it can commit T (First updater win?), and sends abort or commit reply
+        \item if all P voted to commit, CC commits T by writing a \textbf{commit log record} to stable storage (contains commit ts and put-set of T), inform client that T has committed and inform participants
+        \item When $P_i$ rcv commit decision, $P_i$ processes $PS_i$ by creating new object versions using $\textbf{commitTS(T)}$, appends $PS_i$ to $\textbf{propagating queue}$ (for lazy replication). When $P_i$ has processed $PS_i$ for T, P notifies CC that P has completed T and removes T from pending. Then async updates $PS_i$.
+    \end{enumerate}
+\end{enumerate}
+
+
+
+\subsection{10. Raft Consensus}
+% Implements consensus through \textbf{replicated state machines (RSM)} to provide fault-tolerant distributed services. Service remains available if a \textbf{majority} of servers are operational and can communicate. Each server maintains one of three states: \textbf{follower} (passive, expects heartbeats), \textbf{candidate} (initiates elections), or \textbf{leader} (handles client requests, manages log replication).
+
+% \textbf{Terms}: Monotonically increasing integers that mark leadership changes and detect stale leaders. \textit{At most one leader per term}. When a server receives a higher term, it immediately updates its term and reverts to follower state.
+
+% \textbf{Log entries}: Each entry contains (index, term, command). An entry becomes \textit{committed when replicated on a majority of servers}. When comparing logs, a log is more complete if it has either a \textit{higher last term} or the \textit{same last term but higher index}.
+
+\subsubsection{Server State}
+\textbf{Persistent state} (survives crashes):
+\begin{enumerate}
+    \item \textbf{currentTerm}: Latest term server has seen (initialized to 0)
+    \item \textbf{votedFor}: CandidateId that received vote in currentTerm (null if none)
+    \item \textbf{log[]}: Log entries, each containing (index,term,command), first index 1
+\end{enumerate}
+
+\textbf{Volatile state} (all servers, initialized to 0):
+\begin{enumerate}
+    \item \textbf{commitIndex}: Highest log entry known to be committed
+    \item \textbf{lastApplied}: Highest log entry applied to state machine
+\end{enumerate}
+
+\textbf{Leader-only volatile state} (reinitialized after election):
+\begin{enumerate}
+    \item \textbf{nextIndex[i]}: For each server, index of next log entry to send
+        \begin{itemize}
+            \item Initialized to (leader's last log index + 1)
+            \item Used to quickly restore log consistency after failures
+        \end{itemize}
+    \item \textbf{matchIndex[i]}: For each server, highest replicated log entry
+        \begin{itemize}
+            \item Initialized to 0, increases monotonically
+            \item Used to track commitment progress
+        \end{itemize}
+\end{enumerate}
+
+\subsubsection{RPCs \& Timers}
+\textbf{RequestVote RPC}:
+\begin{enumerate}
+    \item \textbf{Arguments}:
+    \begin{itemize}
+        \item candidateId: Candidate requesting vote
+        \item term: Candidate's term
+        \item lastLogIndex: Index of candidate's last log entry
+        \item lastLogTerm: Term of candidate's last log entry
+    \end{itemize}
+    \item \textbf{Response}: (term, voteGranted)
+    \item \textit{Vote granted when}:
+    \begin{itemize}
+        \item Candidate's term $\geq$ current term (current term will be updated)
+        \item Server hasn't voted for different candidate
+        \item Candidate's log is at least as complete as receiver's
+    \end{itemize}
+    \item \textbf{If RPC.term $>$ current term} and did not vote, R.votedFor=null
+    \item \textbf{If already voted (R.term=currentTerm) and same cand}, return True!
+\end{enumerate}
+
+\textbf{AppendEntries RPC}:
+\begin{enumerate}
+    \item \textbf{Arguments}:
+    \begin{itemize}
+        \item leaderId: Current leader's identifier
+        \item term: Leader's term
+        \item leaderCommit: Leader's commitIndex
+        \item prevLogIndex: Index of log entry immediately before new ones
+        \item prevLogTerm: Term of prevLogIndex entry
+        \item entries[]: Log entries to store (empty for heartbeat)
+    \end{itemize}
+    \item \textbf{Response}: (term,success), term=current term of follower F, success=True if F contain entry matching prevLogIndex n prevLogTerm, false otherwise 
+    \item \textit{Sending by Leader}:
+    \begin{itemize}
+        \item Periodically send as heartbeat. entries is empty in this case.
+        \item Send log entries starting at nextIndex[F] index. Update nextIndex[F] \& matchIndex[F] if success, decrement nextIndex[F] and retry if fail.
+        \item Update commitIndex to N, s.t. $N > commitIndex$, a majority of $matchIndex[i]\geq N$ and $log[N].term$=currentTerm if N exists
+    \end{itemize}
+    \item \textit{Processing by followers}:
+    \begin{itemize}
+        \item Reject if leader's term $<$ currentTerm. Else update currentTerm if higher (reflected in response)
+        \item Reject if log doesn't contain entry at prevLogIndex with prevLogTerm
+        \item If conflict found, delete existing entry and all that follow
+        \item Append any new entries not already in log
+        \item Update commitIndex if leader's is higher (commitIndex=$\min$(leaderCommit,index of last entry in F's log)
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Timer System}:
+\begin{enumerate}
+    \item \textbf{Election timer}: Random timeout in [T,2T]
+        \begin{itemize}
+            \item Reset on valid RPCs from current leader
+            \item Triggers new election when expired
+        \end{itemize}
+    \item \textbf{Leader timer}: Periodic trigger for heartbeats/replication
+    \item \textbf{Client timer}: Command retry mechanism
+\end{enumerate}
+
+\subsubsection{Leader Election}
+\textbf{Election Protocol}:
+\begin{enumerate}
+    \item Follower increments term and becomes candidate when election timer expires
+    \item Candidate votes for self and sends RequestVote RPCs
+    \item Upon receiving majority votes, becomes leader and sends heartbeat
+    \item Reverts to follower if discovers current leader or higher term
+    \item Starts new election if timer expires before conclusion
+\end{enumerate}
+
+\textbf{Liveness Properties}:
+\begin{enumerate}
+    \item Random timeouts prevent simultaneous candidates
+    \item Election timeout $\gg$ broadcast RTT ensures stability
+    \item Term mechanism breaks deadlocks
+\end{enumerate}
+
+\subsubsection{Log Replication}
+
+X's log is more \textbf{complete} than Y if
+\begin{enumerate}
+    \item X's last log term is greater than Y's, or
+    \item The terms are equal, and X's last log index is greater
+\end{enumerate}
+\textbf{Normal Operation}: Leader appends locally and broadcasts via AppendEntries. \\
+\textbf{Commitment Rules}:
+A log entry can only be committed through one of two paths, with a crucial \textbf{term-specific constraint}:
+\begin{enumerate}
+    \item \textbf{Direct Commitment}: An entry becomes directly committed only when the leader that created the entry in the current term successfully replicates it to a majority of servers within that same term. \textbf{Simply having an entry appear in a majority of logs is insufficient - the replication must happen by the leader that created it, within its own term.}
+    
+    \item \textbf{Indirect Commitment}: When an entry achieves direct commitment, all previous entries in the log automatically become indirectly committed, regardless of their terms. Ensures no gaps in commitment.
+\end{enumerate}
+
+The term-specific requirement for direct commitment prevents scenarios where entries from previous terms that achieved majority replication but weren't fully committed could conflict with newer entries. Once committed through either path, a leader executes the command, responds to client, and notifies followers via AppendEntries. Followers then execute the committed commands in order (increment \textbf{lastApplied} and apply log[lastApplied] to state machine)
+
+\textbf{Client Interaction}: 
+Clients contact random server initially and get redirected to leader if needed. Each command includes unique serial number to prevent duplicates, used by leaders to cache responses. If timeout, reidentify leader and resend.
+
+\textbf{Read Operations}:
+Standard approach logs reads as normal entries. Optimized approach allows direct reads after leader commits no-op entry at term start, confirms leadership via heartbeat, and verifies state machine currency.
+
+\textbf{Consistency Guarantees}:
+Same index and term imply identical history (preceding entries). Leaders append only, never overwrite. Committed entries persist in all future leader logs, with no conflicts possible at same index.
+
+\subsubsection{Example Scenario}
+Consider a 5-server cluster with logs:
+\begin{verbatim}
+Term:   1  2  3  4  5  6  7
+S1:     1  1  2  2  2  2  4
+S2:     1  1  1  3
+S3:     1  1  2  2  2
+S4:     1
+S5:     1  1  2  2  2  2
+\end{verbatim}
+
+\textbf{Key Observations}:
+\begin{enumerate}
+    \item Entry (1,1) appears in all logs: guaranteed preserved
+    \item Only S2/S5 qualified as leaders if S1 fails:
+    \begin{itemize}
+        \item S4: Log too short
+        \item S3: Missing entries present in S5
+        \item S2: Can overwrite later entries with term 3
+        \item S5: Most complete log matching old leader
+    \end{itemize}
+    \item Committed entries analysis:
+    \begin{itemize}
+        \item (1,1): Never overwritten (universal)
+        \item (2,1): Required for majority consensus
+        \item (3,2)-(5,2): Could be overwritten despite majority
+    \end{itemize}
+\end{enumerate}
+
+\end{multicols*}
+
+\end{document}
